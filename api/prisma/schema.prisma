@@ -1,0 +1,119 @@
+// Modelo de datos del sistema de rifas.
+// Montos: enteros en colones. Números de rifa: texto de dos dígitos ("07").
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum EstadoRifa {
+  borrador
+  activa
+  finalizada
+  cancelada
+}
+
+enum EstadoBoleto {
+  apartado
+  pagado
+}
+
+enum MetodoPago {
+  efectivo
+  sinpe
+}
+
+model Admin {
+  id           Int      @id @default(autoincrement())
+  usuario      String   @unique
+  passwordHash String   @map("password_hash")
+  creadoEn     DateTime @default(now()) @map("creado_en")
+
+  @@map("admins")
+}
+
+model Rifa {
+  id            Int        @id @default(autoincrement())
+  titulo        String
+  descripcion   String?
+  premio        String
+  fotoUrl       String?    @map("foto_url")
+  precioNumero  Int        @map("precio_numero")
+  costoPremio   Int        @default(0) @map("costo_premio")
+  fechaSorteo   DateTime?  @map("fecha_sorteo")
+  reglaGanador  String?    @map("regla_ganador")
+  numeroGanador String?    @map("numero_ganador") @db.Char(2)
+  estado        EstadoRifa @default(borrador)
+  sinpeNumero   String?    @map("sinpe_numero")
+  whatsapp      String?
+  creadaEn      DateTime   @default(now()) @map("creada_en")
+  finalizadaEn  DateTime?  @map("finalizada_en")
+
+  boletos       Boleto[]
+  recordatorios Recordatorio[]
+
+  @@map("rifas")
+}
+
+model Cliente {
+  id       Int      @id @default(autoincrement())
+  nombre   String
+  telefono String   @unique @db.Char(8)
+  notas    String?
+  creadoEn DateTime @default(now()) @map("creado_en")
+
+  boletos       Boleto[]
+  recordatorios Recordatorio[]
+
+  @@map("clientes")
+}
+
+model Boleto {
+  id        Int          @id @default(autoincrement())
+  rifaId    Int          @map("rifa_id")
+  numero    String       @db.Char(2)
+  clienteId Int          @map("cliente_id")
+  estado    EstadoBoleto @default(apartado)
+  creadoEn  DateTime     @default(now()) @map("creado_en")
+
+  rifa    Rifa    @relation(fields: [rifaId], references: [id])
+  cliente Cliente @relation(fields: [clienteId], references: [id])
+  pagos   Pago[]
+
+  @@unique([rifaId, numero])
+  @@index([clienteId])
+  @@map("boletos")
+}
+
+model Pago {
+  id         Int        @id @default(autoincrement())
+  boletoId   Int        @map("boleto_id")
+  monto      Int
+  metodo     MetodoPago
+  referencia String?
+  fecha      DateTime   @default(now())
+  nota       String?
+
+  boleto Boleto @relation(fields: [boletoId], references: [id])
+
+  @@index([boletoId])
+  @@map("pagos")
+}
+
+model Recordatorio {
+  id        Int      @id @default(autoincrement())
+  clienteId Int      @map("cliente_id")
+  rifaId    Int      @map("rifa_id")
+  enviadoEn DateTime @default(now()) @map("enviado_en")
+
+  cliente Cliente @relation(fields: [clienteId], references: [id])
+  rifa    Rifa    @relation(fields: [rifaId], references: [id])
+
+  @@index([clienteId, rifaId])
+  @@map("recordatorios")
+}

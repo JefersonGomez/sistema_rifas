@@ -1,0 +1,16 @@
+{
+  "name": "sistema-rifas",
+  "private": true,
+  "workspaces": [
+    "api",
+    "web"
+  ],
+  "scripts": {
+    "dev": "concurrently -n api,web -c cyan,magenta \"npm run dev -w api\" \"npm run dev -w web\"",
+    "build": "npm run build -w web",
+    "start": "npm run start -w api"
+  },
+  "devDependencies": {
+    "concurrently": "^10.0.6"
+  }
+}
