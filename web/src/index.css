@@ -10,3 +10,28 @@
     @apply bg-arena font-sans text-tinta antialiased;
   }
 }
+
+@layer components {
+  /* Botones de al menos 48 px de alto, fáciles de tocar con el pulgar. */
+  .btn {
+    @apply inline-flex min-h-12 items-center justify-center gap-2 rounded-xl px-5 text-lg font-extrabold transition active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  .btn-primario {
+    @apply btn bg-jade text-white hover:bg-jade/90;
+  }
+  .btn-secundario {
+    @apply btn border-2 border-jade bg-white text-jade hover:bg-jade-claro;
+  }
+  .btn-peligro {
+    @apply btn border-2 border-coral bg-white text-coral hover:bg-coral/5;
+  }
+  .campo {
+    @apply min-h-12 w-full rounded-xl border-2 border-black/10 bg-white px-4 text-lg outline-none transition focus:border-jade;
+  }
+  .etiqueta {
+    @apply mb-1 block text-base font-bold;
+  }
+  .tarjeta {
+    @apply rounded-2xl bg-white p-4 shadow-sm;
+  }
+}

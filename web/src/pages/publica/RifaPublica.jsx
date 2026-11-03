@@ -4,6 +4,8 @@ import { CalendarDays, Gift, Ticket, Trophy, Wallet, X } from 'lucide-react';
 import { pedir } from '../../api/cliente.js';
 import Cuadricula from '../../components/Cuadricula.jsx';
 import BotonWhatsApp from '../../components/BotonWhatsApp.jsx';
+import { Marca } from '../../components/Logo.jsx';
+import { temaDe } from '../../utils/temas.js';
 import { formatoColones, formatoFecha, formatoTelefono, unirLista } from '../../utils/formato.js';
 import { mensajeApartar } from '../../utils/mensajesWhatsApp.js';
 
@@ -11,10 +13,22 @@ export default function RifaPublica() {
   const rifaQ = useQuery({ queryKey: ['public', 'rifa'], queryFn: () => pedir('/public/rifa') });
   const rifa = rifaQ.data?.rifa;
 
-  if (rifaQ.isPending) return <Cargando />;
-  if (rifaQ.isError) return <ErrorCarga mensaje={rifaQ.error.message} onReintentar={rifaQ.refetch} />;
-  if (!rifa) return <SinRifaActiva />;
-  return <RifaActiva rifa={rifa} />;
+  return (
+    <>
+      <header className="mx-auto flex max-w-xl justify-center px-4 pt-5">
+        <Marca />
+      </header>
+      {rifaQ.isPending ? (
+        <Cargando />
+      ) : rifaQ.isError ? (
+        <ErrorCarga mensaje={rifaQ.error.message} onReintentar={rifaQ.refetch} />
+      ) : rifa ? (
+        <RifaActiva rifa={rifa} />
+      ) : (
+        <SinRifaActiva />
+      )}
+    </>
+  );
 }
 
 function RifaActiva({ rifa }) {
@@ -24,6 +38,7 @@ function RifaActiva({ rifa }) {
     refetchInterval: 60_000, // la lista se mantiene al día sola
   });
   const [seleccion, setSeleccion] = useState(() => new Set());
+  const tema = temaDe(rifa);
 
   // Si alguien aparta un número mientras el cliente lo tenía elegido, se quita de la selección.
   const elegidos = useMemo(() => {
@@ -39,8 +54,14 @@ function RifaActiva({ rifa }) {
       return nueva;
     });
 
+  const celdas = numerosQ.data?.numeros.map(({ numero, estado }) =>
+    estado === 'ocupado'
+      ? { numero, estado }
+      : { numero, estado: elegidos.has(numero) ? 'elegido' : 'libre', onClick: () => tocar(numero) },
+  );
+
   return (
-    <main className={`mx-auto max-w-xl px-4 pt-6 ${listaElegidos.length ? 'pb-56' : 'pb-10'}`}>
+    <main className={`mx-auto max-w-xl px-4 pt-4 ${listaElegidos.length ? 'pb-56' : 'pb-10'}`}>
       <Premio rifa={rifa} />
 
       <section className="mt-6">
@@ -61,8 +82,8 @@ function RifaActiva({ rifa }) {
               )}
             </p>
             <p className="mb-4 mt-1 text-center text-lg">Toque los números que quiere y apártelos por WhatsApp.</p>
-            <Leyenda />
-            <Cuadricula numeros={numerosQ.data.numeros} elegidos={elegidos} onTocar={tocar} />
+            <Leyenda tema={tema} />
+            <Cuadricula celdas={celdas} tema={tema} />
           </>
         )}
       </section>
@@ -121,18 +142,18 @@ function Dato({ icono: Icono, children }) {
   );
 }
 
-function Leyenda() {
+function Leyenda({ tema }) {
   const item = (clase, texto) => (
     <span className="flex items-center gap-1.5">
-      <span className={`inline-block h-5 w-5 rounded ${clase}`} aria-hidden />
+      <span className={`inline-block h-5 w-5 border-2 ${clase}`} aria-hidden />
       {texto}
     </span>
   );
   return (
     <div className="mb-3 flex flex-wrap justify-center gap-x-5 gap-y-1 text-base">
-      {item('border-2 border-jade bg-white', 'Libre')}
-      {item('bg-jade', 'Elegido')}
-      {item('bg-gray-200', 'Ocupado')}
+      {item(`rounded bg-white ${tema.color.libre}`, 'Libre')}
+      {item(`rounded-full ${tema.color.elegido}`, 'Elegido')}
+      {item('rounded border-transparent bg-gray-200', 'Ocupado')}
     </div>
   );
 }
@@ -140,20 +161,15 @@ function Leyenda() {
 function BarraApartar({ rifa, numeros, onLimpiar }) {
   const total = numeros.length * rifa.precioNumero;
   return (
-    <div className="fixed inset-x-0 bottom-0 z-10 border-t border-black/5 bg-white/95 shadow-[0_-4px_20px_rgba(0,0,0,0.08)] backdrop-blur">
+    <div className="fixed inset-x-0 bottom-0 z-10 animate-subir border-t border-black/5 bg-white/95 shadow-[0_-4px_20px_rgba(0,0,0,0.08)] backdrop-blur">
       <div className="mx-auto max-w-xl px-4 pb-[max(1rem,env(safe-area-inset-bottom))] pt-3">
         <div className="mb-3 flex items-start justify-between gap-3">
           <p className="text-lg">
-            {numeros.length === 1 ? 'Número' : 'Números'}{' '}
-            <strong className="tabular-nums">{unirLista(numeros)}</strong>
+            {numeros.length === 1 ? 'Número' : 'Números'} <strong className="tabular-nums">{unirLista(numeros)}</strong>
             <br />
             Total: <strong>{formatoColones(total)}</strong>
           </p>
-          <button
-            type="button"
-            onClick={onLimpiar}
-            className="flex min-h-12 shrink-0 items-center gap-1 rounded-xl px-3 text-base font-bold text-tinta/70 hover:bg-black/5"
-          >
+          <button type="button" onClick={onLimpiar} className="btn shrink-0 px-3 text-base text-tinta/70 hover:bg-black/5">
             <X aria-hidden className="h-5 w-5" /> Quitar
           </button>
         </div>
@@ -174,7 +190,7 @@ function SinRifaActiva() {
   const resultado = ganadorQ.data?.resultado;
 
   return (
-    <main className="mx-auto max-w-xl px-4 py-10 text-center">
+    <main className="mx-auto max-w-xl px-4 py-8 text-center">
       {resultado && (
         <section className="mb-10 rounded-3xl bg-white p-6 shadow-sm">
           <Trophy aria-hidden className="mx-auto h-12 w-12 text-mango" />
@@ -204,11 +220,7 @@ function ErrorCarga({ mensaje, onReintentar }) {
   return (
     <div className="mx-auto max-w-xl px-4 py-16 text-center">
       <p className="text-lg">{mensaje}</p>
-      <button
-        type="button"
-        onClick={() => onReintentar()}
-        className="mt-4 min-h-12 rounded-xl bg-jade px-6 text-lg font-bold text-white"
-      >
+      <button type="button" onClick={() => onReintentar()} className="btn-primario mt-4">
         Intentar de nuevo
       </button>
     </div>

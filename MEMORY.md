@@ -3,8 +3,8 @@
 Bitácora de avance. Actualizar al cerrar cada tarea o etapa.
 
 ## Estado actual
-**Etapa 2 — Página pública: terminada (2026-11-02), pendiente de revisión.**
-Siguiente: Etapa 3 — Panel de mamá.
+**Etapa 3 — Panel de mamá: terminada (2026-11-02), pendiente de revisión.**
+Siguiente: Etapa 4 — Despliegue (sin Docker).
 
 ## Etapas
 ### 1. Base del proyecto ✅
@@ -20,12 +20,16 @@ Siguiente: Etapa 3 — Panel de mamá.
 - [x] Seed (`npm run seed -w api`): 30 clientes, rifa activa con 63 vendidos y abonos variados, rifa pasada con ganador 42
 - [x] Probado a 360 px de ancho (sin scroll horizontal) con capturas en Edge headless
 
-### 3. Panel de mamá
-- [ ] Login y sesión (bcrypt, cookie httpOnly, 30 días) + `npm run crear-admin`
-- [ ] Crear y activar rifa con foto
-- [ ] Talonario: vender, abonar, liberar
-- [ ] Por cobrar con recordatorio por WhatsApp
-- [ ] Compartir números libres
+### 3. Panel de mamá ✅
+- [x] Login y sesión (bcrypt, cookie httpOnly 30 días, 5 intentos fallidos / 15 min) + `npm run crear-admin -w api`
+- [x] Rifas: crear, editar, publicar (una sola), finalizar con número ganador; foto JPG/PNG/WebP ≤ 5 MB (revisa bytes reales)
+- [x] Estilo de cuadrícula por rifa: 5 colores × 4 letras, con vista previa; animación de bolita al tocar
+- [x] Talonario: vender varios números (buscar o crear cliente, "¿ya pagó?"), abonar, borrar pago, cambiar dueño, liberar
+- [x] Por cobrar: deudas por cliente de mayor a menor, recordatorio por WhatsApp y fecha del último
+- [x] Compartir números libres por WhatsApp (Inicio y Talonario)
+- [x] Inicio: vendidos, cobrado, pendiente, días para el sorteo y accesos rápidos
+- [x] Marca "Rifas Ivannia" con logo de tómbola animada (también favicon)
+- [x] Probado: API con script (sesión, ventas, abonos, reglas) y panel en navegador a 375 px y 1280 px
 
 ### 4. Despliegue (sin Docker)
 - [ ] Definir cómo se corre en el VPS (Node directo + proceso administrador)
@@ -41,16 +45,25 @@ Siguiente: Etapa 3 — Panel de mamá.
 - `DATABASE_URL` = pooler de Neon (app); `DIRECT_URL` = conexión directa (migraciones).
 - **Tailwind 3** porque el plan usa `tailwind.config.js`.
 - Reglas en SQL dentro de la migración: una sola rifa activa (índice único parcial), CHECK de número, teléfono y montos.
-- Llaves foráneas con `RESTRICT`: liberar un número con pagos se decide en la etapa 3.
+- **No se libera un número con pagos** (decisión del usuario). La API lo valida y usa `deleteMany` con condición para evitar carreras.
 - **Página pública permite elegir varios números** y mandarlos en un solo mensaje de WhatsApp (el plan hablaba de uno).
 - El mensaje de apartar usa el **título** de la rifa: "…de la rifa de la Freidora de aire". El título debe empezar con "Rifa…".
 - Números públicos se refrescan cada 60 s y al volver a la pestaña (TanStack Query).
 - La ruta pública `/rifa` expone el WhatsApp y SINPE de mamá (son de ella, no de clientes).
 - `/rifa/ganador` muestra la última rifa finalizada solo cuando no hay rifa activa; `hayGanador` es un sí/no, sin datos del comprador.
+- Sesión con token HMAC propio (sin jsonwebtoken ni express-session): menos dependencias y no necesita guardar sesiones.
+- `bcryptjs` (JS puro) en vez de `bcrypt` para evitar compilar módulos nativos en Windows.
+- Panel sin pantallas Clientes ni Métricas todavía (etapa 5). Finalizar rifa se adelantó a la etapa 3 para cerrar el ciclo completo.
+- Fecha del sorteo se guarda al mediodía de Costa Rica para que no cambie de día por zona horaria.
+- Rifa nueva copia WhatsApp, SINPE, regla y estilo de la rifa anterior. Por defecto WhatsApp y SINPE = 8326-0382.
+- Abono con `SELECT … FOR UPDATE` para que dos pagos simultáneos no superen el precio.
 
 ## Pendientes / notas
 - `npm audit`: 3 alertas altas en `deepmerge-ts` dentro del CLI de Prisma (solo desarrollo, no llega a producción). Revisar al subir de versión.
 - **La base de Neon tiene datos de prueba** (seed). Antes de usarla con mamá hay que vaciarlos, o usar una rama de Neon aparte para desarrollo.
-- Los WhatsApp/SINPE del seed son `88888888` (ficticios).
+- WhatsApp para apartar: **8326-0382** (dado por el usuario). SINPE: se asumió el mismo número, **confirmar**.
 - Al desplegar detrás de un proxy, configurar `app.set('trust proxy', 1)` para que el rate limit vea la IP real.
-- Por definir con mamá: nombre visible ("Rifas de …"), WhatsApp y SINPE, regla exacta del ganador.
+- Nombre: **Rifas Ivannia**. Regla: número del primer premio de la Lotería Nacional de Costa Rica.
+- Pendiente: crear rama `desarrollo` en Neon y poner su URL en `api/.env`; la rama principal queda para datos reales.
+- Vender tarda ~2 s (guardar + recargar desde Neon en EE. UU.). Optimizar si molesta.
+- `api/uploads/` guarda las fotos; está en .gitignore y hay que respaldarla en el VPS.

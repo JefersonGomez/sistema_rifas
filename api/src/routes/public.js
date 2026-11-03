@@ -29,6 +29,8 @@ const camposPublicos = {
   reglaGanador: true,
   sinpeNumero: true,
   whatsapp: true,
+  colorCeldas: true,
+  fuenteNumeros: true,
 };
 
 const buscarRifaActiva = () =>

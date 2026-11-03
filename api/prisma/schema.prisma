@@ -51,6 +51,8 @@ model Rifa {
   estado        EstadoRifa @default(borrador)
   sinpeNumero   String?    @map("sinpe_numero")
   whatsapp      String?
+  colorCeldas   String     @default("jade") @map("color_celdas")
+  fuenteNumeros String     @default("nunito") @map("fuente_numeros")
   creadaEn      DateTime   @default(now()) @map("creada_en")
   finalizadaEn  DateTime?  @map("finalizada_en")
 

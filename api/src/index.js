@@ -5,6 +5,11 @@ import helmet from 'helmet';
 import { config } from './config.js';
 import { prisma } from './db.js';
 import { publicRouter } from './routes/public.js';
+import { authRouter } from './routes/auth.js';
+import { rifasRouter } from './routes/rifas.js';
+import { boletosRouter } from './routes/boletos.js';
+import { clientesRouter } from './routes/clientes.js';
+import { requiereSesion } from './middleware/auth.js';
 import { manejarErrores, rutaNoEncontrada } from './middleware/errores.js';
 
 const app = express();
@@ -19,7 +24,7 @@ app.use(
     },
   }),
 );
-app.use(express.json());
+app.use(express.json({ limit: '100kb' }));
 
 app.get('/api/health', async (_req, res) => {
   try {
@@ -31,7 +36,12 @@ app.get('/api/health', async (_req, res) => {
 });
 
 app.use('/api/public', publicRouter);
+app.use('/api/auth', authRouter);
+app.use('/api/admin', requiereSesion, rifasRouter, boletosRouter, clientesRouter);
 app.use('/api', rutaNoEncontrada);
+
+// Fotos de los premios.
+app.use('/uploads', express.static(config.uploadDir, { maxAge: '7d', index: false }));
 
 // En producción Express sirve el frontend ya compilado.
 if (config.esProduccion) {
