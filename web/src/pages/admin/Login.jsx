@@ -62,6 +62,9 @@ export default function Login() {
           {entrar.isPending ? 'Entrando…' : 'Entrar'}
         </button>
       </form>
+      <a href="/" className="btn mt-4 text-jade">
+        ¿Quiere ver los números de la rifa?
+      </a>
     </main>
   );
 }

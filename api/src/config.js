@@ -6,7 +6,11 @@ if (!process.env.SESSION_SECRET || process.env.SESSION_SECRET.length < 32) {
 
 export const config = {
   port: Number(process.env.PORT) || 3000,
+  // En el VPS: 127.0.0.1, para que solo Caddy pueda llegar a la app.
+  host: process.env.HOST || undefined,
   esProduccion: process.env.NODE_ENV === 'production',
+  // Detrás de Caddy: 1 = confiar en un proxy, para que el límite de intentos vea la IP real.
+  trustProxy: Number(process.env.TRUST_PROXY) || 0,
   sessionSecret: process.env.SESSION_SECRET,
   uploadDir: path.resolve(process.env.UPLOAD_DIR || 'uploads'),
 };

@@ -7,11 +7,11 @@ App web **Rifas Ivannia** para que mamá maneje rifas de 00 a 99 desde el celula
 
 ## Stack
 - Monorepo con npm workspaces: `api/` y `web/`.
-- **web:** React 19 + Vite + Tailwind CSS 3 (`tailwind.config.js`), React Router 7, TanStack Query 5, Lucide React. Luego: Recharts, vite-plugin-pwa.
+- **web:** React 19 + Vite + Tailwind CSS 3 (`tailwind.config.js`), React Router 7, TanStack Query 5, Lucide React, vite-plugin-pwa (instalable; el service worker NO guarda `/api` ni `/uploads`). Luego: Recharts.
 - **api:** Node 22 + Express 5 (ESM), Prisma 6, Zod 4, helmet, express-rate-limit, bcryptjs, multer (fotos).
 - Sesión: token HMAC propio en cookie `sesion` httpOnly/sameSite=strict, 30 días (`api/src/middleware/auth.js`). Requiere `SESSION_SECRET`.
 - **Base de datos:** PostgreSQL en Neon. `DATABASE_URL` (pooler) para la app, `DIRECT_URL` (sin pooler) para migraciones.
-- **Sin Docker.** No crear Dockerfile, docker-compose ni Caddyfile.
+- **Sin Docker.** No crear Dockerfile ni docker-compose. En el VPS: Node + systemd + Caddy instalados directo; archivos y guía en `despliegue/`.
 
 ## Comandos
 - `npm install` — instala todo (desde la raíz).
@@ -22,6 +22,7 @@ App web **Rifas Ivannia** para que mamá maneje rifas de 00 a 99 desde el celula
 - `npm run crear-admin -w api` — crea el usuario del panel o le cambia la contraseña.
 - `npm run seed -w api` — carga datos de prueba si la base está vacía (`-- --reiniciar` borra todo y recarga; bloqueado en producción).
 - Variables en `api/.env` (copiar de `api/.env.example`). Nunca subir `.env`.
+- En el VPS: `despliegue/actualizar.sh` (pull, build, migraciones, reinicio) y `despliegue/respaldo.sh` (cron diario).
 - En Windows, `prisma generate` falla (EPERM) si `npm run dev` está corriendo: detenerlo antes de migrar.
 
 ## Modelo de datos (`api/prisma/schema.prisma`)

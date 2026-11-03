@@ -1,0 +1,25 @@
+# Servicio de systemd: mantiene la app corriendo y la reinicia si se cae o si el VPS se reinicia.
+# Instalar: sudo cp despliegue/rifas.service /etc/systemd/system/ && sudo systemctl enable --now rifas
+[Unit]
+Description=Rifas Ivannia (API + página web)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=rifas
+WorkingDirectory=/opt/rifas/api
+Environment=NODE_ENV=production
+ExecStart=/usr/bin/node --env-file=.env src/index.js
+Restart=always
+RestartSec=5
+
+# Protecciones: la app solo puede escribir en la carpeta de fotos.
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/opt/rifas/api/uploads
+
+[Install]
+WantedBy=multi-user.target

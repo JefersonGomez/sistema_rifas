@@ -13,6 +13,8 @@ import { requiereSesion } from './middleware/auth.js';
 import { manejarErrores, rutaNoEncontrada } from './middleware/errores.js';
 
 const app = express();
+app.set('trust proxy', config.trustProxy);
+app.disable('x-powered-by');
 
 app.use(
   helmet({
@@ -42,16 +44,30 @@ app.use('/api', rutaNoEncontrada);
 
 // Fotos de los premios.
 app.use('/uploads', express.static(config.uploadDir, { maxAge: '7d', index: false }));
+app.use('/uploads', (_req, res) => res.status(404).end());
 
 // En producción Express sirve el frontend ya compilado.
 if (config.esProduccion) {
   const dist = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../web/dist');
-  app.use(express.static(dist));
-  app.get(/.*/, (_req, res) => res.sendFile(path.join(dist, 'index.html')));
+  // Los archivos de /assets llevan un código en el nombre: se pueden guardar un año.
+  // index.html y el service worker siempre se revisan, para que las actualizaciones lleguen.
+  app.use(
+    express.static(dist, {
+      index: false,
+      setHeaders: (res, ruta) => {
+        const largo = ruta.includes(`${path.sep}assets${path.sep}`);
+        res.setHeader('Cache-Control', largo ? 'public, max-age=31536000, immutable' : 'no-cache');
+      },
+    }),
+  );
+  app.get(/.*/, (_req, res) => {
+    res.setHeader('Cache-Control', 'no-cache');
+    res.sendFile(path.join(dist, 'index.html'));
+  });
 }
 
 app.use(manejarErrores);
 
-app.listen(config.port, () => {
-  console.log(`API escuchando en http://localhost:${config.port}`);
+app.listen(config.port, config.host, () => {
+  console.log(`API escuchando en http://${config.host ?? 'localhost'}:${config.port}`);
 });

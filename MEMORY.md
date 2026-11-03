@@ -3,8 +3,8 @@
 Bitácora de avance. Actualizar al cerrar cada tarea o etapa.
 
 ## Estado actual
-**Etapa 3 — Panel de mamá: terminada (2026-11-02), pendiente de revisión.**
-Siguiente: Etapa 4 — Despliegue (sin Docker).
+**Etapa 4 — Despliegue: código y guía listos (2026-11-03). Falta ejecutarla en el VPS** (no hay acceso desde aquí).
+Siguiente: correr `despliegue/README.md` en el VPS y probar con mamá; luego Etapa 5 — Historial y métricas.
 
 ## Etapas
 ### 1. Base del proyecto ✅
@@ -32,8 +32,17 @@ Siguiente: Etapa 4 — Despliegue (sin Docker).
 - [x] Probado: API con script (sesión, ventas, abonos, reglas) y panel en navegador a 375 px y 1280 px
 
 ### 4. Despliegue (sin Docker)
-- [ ] Definir cómo se corre en el VPS (Node directo + proceso administrador)
-- [ ] HTTPS, subdominio, respaldos, PWA
+- [x] Forma de correr en el VPS: Node 22 + systemd (`despliegue/rifas.service`), usuario `rifas`, app en `/opt/rifas`
+- [x] HTTPS con Caddy nativo (`despliegue/Caddyfile`), subdominio DuckDNS sugerido `rifasivannia.duckdns.org`
+- [x] Respaldos: `despliegue/respaldo.sh` (pg_dump 18 + fotos, 14 días) por cron
+- [x] Actualizar: `despliegue/actualizar.sh`
+- [x] PWA instalable (manifest, íconos de tómbola, service worker); abre en `/admin`
+- [x] Producción probada en la compu: cookie Secure, caché de assets, rutas directas, 404 de fotos, instalable sin errores
+- [x] Guía paso a paso: `despliegue/README.md`
+- [ ] Ejecutar la guía en el VPS (usuario)
+- [ ] Registrar subdominio en DuckDNS (usuario)
+- [ ] Vaciar datos de prueba de la rama principal de Neon antes de usarla de verdad
+- [ ] Probar con mamá en su teléfono con datos móviles y ajustar
 
 ### 5. Historial y métricas
 - [ ] Finalizar rifa, historial, ficha de cliente, métricas, exportar CSV
@@ -57,12 +66,16 @@ Siguiente: Etapa 4 — Despliegue (sin Docker).
 - Fecha del sorteo se guarda al mediodía de Costa Rica para que no cambie de día por zona horaria.
 - Rifa nueva copia WhatsApp, SINPE, regla y estilo de la rifa anterior. Por defecto WhatsApp y SINPE = 8326-0382.
 - Abono con `SELECT … FOR UPDATE` para que dos pagos simultáneos no superen el precio.
+- **Despliegue sin Docker**: systemd en vez de PM2 (viene con Ubuntu, sin dependencias). La app escucha en 127.0.0.1 (`HOST`) y confía en un proxy (`TRUST_PROXY=1`).
+- PWA con `start_url: /admin` (la instala mamá). El login tiene enlace a la página pública por si un cliente la instala.
+- Service worker solo guarda la interfaz; `/api` y `/uploads` siempre van al servidor (datos siempre frescos).
+- `vite-plugin-pwa` 1.3 (no 2.0, salió hace un mes). Sus dependencias de compilación traen alertas de `npm audit` (solo al compilar).
+- Neon corre PostgreSQL 18: el VPS necesita `postgresql-client-18` para `pg_dump`.
 
 ## Pendientes / notas
 - `npm audit`: 3 alertas altas en `deepmerge-ts` dentro del CLI de Prisma (solo desarrollo, no llega a producción). Revisar al subir de versión.
 - **La base de Neon tiene datos de prueba** (seed). Antes de usarla con mamá hay que vaciarlos, o usar una rama de Neon aparte para desarrollo.
 - WhatsApp para apartar: **8326-0382** (dado por el usuario). SINPE: se asumió el mismo número, **confirmar**.
-- Al desplegar detrás de un proxy, configurar `app.set('trust proxy', 1)` para que el rate limit vea la IP real.
 - Nombre: **Rifas Ivannia**. Regla: número del primer premio de la Lotería Nacional de Costa Rica.
 - Pendiente: crear rama `desarrollo` en Neon y poner su URL en `api/.env`; la rama principal queda para datos reales.
 - Vender tarda ~2 s (guardar + recargar desde Neon en EE. UU.). Optimizar si molesta.
