@@ -18,6 +18,7 @@ App web para que mamá maneje rifas de 00 a 99 desde el celular: una **página p
 - `npm run build` — compila el frontend a `web/dist`.
 - `npm run db:migrate -w api` — crea/aplica migraciones en desarrollo.
 - `npm run db:deploy -w api` — aplica migraciones en producción.
+- `npm run seed -w api` — carga datos de prueba si la base está vacía (`-- --reiniciar` borra todo y recarga; bloqueado en producción).
 - Variables en `api/.env` (copiar de `api/.env.example`). Nunca subir `.env`.
 
 ## Modelo de datos (`api/prisma/schema.prisma`)
