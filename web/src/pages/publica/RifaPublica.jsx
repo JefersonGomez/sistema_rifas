@@ -17,7 +17,7 @@ export default function RifaPublica() {
 
   return (
     <>
-      <header className="mx-auto flex max-w-xl justify-center px-4 pt-5">
+      <header className="mx-auto flex max-w-xl justify-center px-4 pt-5 md:max-w-6xl md:justify-start lg:px-8">
         <Marca />
       </header>
       {rifaQ.isPending ? (
@@ -63,10 +63,17 @@ function RifaActiva({ rifa }) {
   );
 
   return (
-    <main className={`mx-auto max-w-xl px-4 pt-4 ${listaElegidos.length ? 'pb-56' : 'pb-10'}`}>
-      <Premio rifa={rifa} />
+    // Celular: uno debajo del otro. Desde tablet: la rifa a la izquierda y el talonario a la derecha.
+    <main
+      className={`mx-auto max-w-xl px-4 pt-4 md:grid md:max-w-6xl md:grid-cols-[5fr_6fr] md:items-start md:gap-8 md:pt-6 lg:px-8 ${
+        listaElegidos.length ? 'pb-56 md:pb-10' : 'pb-10'
+      }`}
+    >
+      <div className="md:sticky md:top-6">
+        <Premio rifa={rifa} />
+      </div>
 
-      <section className="mt-6">
+      <section className="mt-6 md:mt-0 md:rounded-3xl md:bg-white md:p-6 md:shadow-sm" aria-label="Talonario">
         {numerosQ.isError ? (
           <ErrorCarga mensaje={numerosQ.error.message} onReintentar={numerosQ.refetch} />
         ) : !numerosQ.data ? (
@@ -90,18 +97,18 @@ function RifaActiva({ rifa }) {
             <Cuadricula celdas={celdas} tema={tema} />
           </>
         )}
+
+        {rifa.sinpeNumero && (
+          <p className="mt-6 text-center text-lg">
+            <Wallet aria-hidden className="mr-2 inline h-5 w-5 align-[-3px] text-jade" />
+            Puede pagar por SINPE Móvil al <strong className="tabular-nums">{formatoTelefono(rifa.sinpeNumero)}</strong>
+          </p>
+        )}
+
+        {listaElegidos.length > 0 && (
+          <BarraApartar rifa={rifa} numeros={listaElegidos} onLimpiar={() => setSeleccion(new Set())} />
+        )}
       </section>
-
-      {rifa.sinpeNumero && (
-        <p className="mt-6 text-center text-lg">
-          <Wallet aria-hidden className="mr-2 inline h-5 w-5 align-[-3px] text-jade" />
-          Puede pagar por SINPE Móvil al <strong className="tabular-nums">{formatoTelefono(rifa.sinpeNumero)}</strong>
-        </p>
-      )}
-
-      {listaElegidos.length > 0 && (
-        <BarraApartar rifa={rifa} numeros={listaElegidos} onLimpiar={() => setSeleccion(new Set())} />
-      )}
     </main>
   );
 }
@@ -195,8 +202,8 @@ function Leyenda({ tema }) {
 function BarraApartar({ rifa, numeros, onLimpiar }) {
   const total = numeros.length * rifa.precioNumero;
   return (
-    <div className="fixed inset-x-0 bottom-0 z-10 animate-subir border-t border-black/5 bg-white/95 shadow-[0_-4px_20px_rgba(0,0,0,0.08)] backdrop-blur">
-      <div className="mx-auto max-w-xl px-4 pb-[max(1rem,env(safe-area-inset-bottom))] pt-3">
+    <div className="fixed inset-x-0 bottom-0 z-10 animate-subir border-t border-black/5 bg-white/95 shadow-[0_-4px_20px_rgba(0,0,0,0.08)] backdrop-blur md:sticky md:bottom-4 md:mt-5 md:rounded-2xl md:border md:shadow-xl">
+      <div className="mx-auto max-w-xl px-4 pb-[max(1rem,env(safe-area-inset-bottom))] pt-3 md:pb-4">
         <div className="mb-3 flex items-start justify-between gap-3">
           <p className="text-lg">
             {numeros.length === 1 ? 'Número' : 'Números'} <strong className="tabular-nums">{unirLista(numeros)}</strong>
