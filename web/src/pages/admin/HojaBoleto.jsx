@@ -99,7 +99,7 @@ export default function HojaBoleto({ rifa, item, onCerrar }) {
             <p className="tabular-nums text-tinta/70">{formatoTelefono(boleto.cliente.telefono)}</p>
           </div>
           <span
-            className={`shrink-0 rounded-full px-3 py-1 text-base font-bold ${pagado ? 'bg-jade text-white' : 'bg-mango-claro text-amber-900'}`}
+            className={`shrink-0 rounded-full px-3 py-1 text-base font-bold ${pagado ? 'bg-jade text-sobrejade' : 'bg-mango-claro text-amber-900 dark:text-amber-200'}`}
           >
             {pagado ? 'Pagado' : 'Apartado'}
           </span>
@@ -111,7 +111,7 @@ export default function HojaBoleto({ rifa, item, onCerrar }) {
           </div>
           <div>
             <p className="text-base text-tinta/70">Debe</p>
-            <p className={`font-titulo text-2xl font-extrabold ${boleto.saldo ? 'text-amber-700' : ''}`}>{formatoColones(boleto.saldo)}</p>
+            <p className={`font-titulo text-2xl font-extrabold ${boleto.saldo ? 'text-amber-700 dark:text-amber-400' : ''}`}>{formatoColones(boleto.saldo)}</p>
           </div>
         </div>
       </div>
@@ -119,7 +119,7 @@ export default function HojaBoleto({ rifa, item, onCerrar }) {
       {boleto.pagos.length > 0 && (
         <section className="mt-4">
           <h3 className="etiqueta">Pagos</h3>
-          <ul className="divide-y divide-black/5 rounded-xl bg-white">
+          <ul className="divide-y divide-tinta/5 rounded-xl bg-superficie">
             {boleto.pagos.map((p) => (
               <li key={p.id} className="flex items-center gap-3 py-1 pl-4 pr-1">
                 {p.metodo === 'sinpe' ? (
@@ -165,7 +165,7 @@ export default function HojaBoleto({ rifa, item, onCerrar }) {
           Cambiar dueño
         </button>
         {boleto.pagos.length > 0 ? (
-          <p className="flex items-start gap-2 rounded-xl bg-black/5 p-3 text-base">
+          <p className="flex items-start gap-2 rounded-xl bg-tinta/5 p-3 text-base">
             <Lock aria-hidden className="mt-0.5 h-5 w-5 shrink-0" />
             Este número no se puede liberar porque ya tiene pagos.
           </p>

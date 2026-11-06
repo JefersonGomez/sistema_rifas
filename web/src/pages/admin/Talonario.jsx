@@ -62,9 +62,9 @@ export default function Talonario() {
       </header>
 
       <div className="mb-3 grid grid-cols-3 gap-2 text-center">
-        <Conteo valor={libres.length} texto="Libres" clase="border-2 border-jade bg-white" />
+        <Conteo valor={libres.length} texto="Libres" clase="border-2 border-jade bg-superficie" />
         <Conteo valor={resumen.vendidos - resumen.pagados} texto="Apartados" clase="border-2 border-mango bg-mango-claro" />
-        <Conteo valor={resumen.pagados} texto="Pagados" clase="bg-jade text-white" />
+        <Conteo valor={resumen.pagados} texto="Pagados" clase="bg-jade text-sobrejade" />
       </div>
       <p className="mb-3 text-center text-base text-tinta/70">
         Toque un número libre para venderlo, o uno ocupado para ver quién lo tiene.
@@ -73,7 +73,7 @@ export default function Talonario() {
       <Cuadricula celdas={celdas} tema={{ fuente: temaDe(rifa).fuente }} />
 
       {elegidos.length > 0 && (
-        <div className="fixed inset-x-0 bottom-[calc(4rem+env(safe-area-inset-bottom))] z-20 border-t border-black/5 bg-white/95 backdrop-blur md:bottom-0 md:left-64">
+        <div className="fixed inset-x-0 bottom-[calc(4rem+env(safe-area-inset-bottom))] z-20 border-t border-tinta/5 bg-superficie/95 backdrop-blur md:bottom-0 md:left-64">
           <div className="mx-auto flex max-w-3xl items-center gap-3 px-4 py-3">
             <p className="min-w-0 flex-1 text-lg">
               <strong className="tabular-nums">{unirLista(elegidos)}</strong>

@@ -4,7 +4,7 @@ export const COLORES = {
   jade: {
     nombre: 'Jade',
     libre: 'border-jade text-jade hover:bg-jade-claro',
-    elegido: 'border-jade bg-jade text-white',
+    elegido: 'border-jade bg-jade text-sobrejade',
     muestra: 'bg-jade',
   },
   azul: {

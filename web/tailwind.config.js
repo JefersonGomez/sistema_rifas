@@ -1,16 +1,21 @@
 /** @type {import('tailwindcss').Config} */
 export default {
   content: ['./index.html', './src/**/*.{js,jsx}'],
+  // Modo oscuro solo dentro del panel (clase .modo-oscuro en su contenedor).
+  darkMode: ['selector', '.modo-oscuro'],
   theme: {
     extend: {
+      // Los colores que cambian en modo oscuro vienen de variables CSS (ver index.css).
       colors: {
-        jade: { DEFAULT: '#0F766E', claro: '#CCFBF1' },
-        mango: { DEFAULT: '#F59E0B', claro: '#FEF3C7' },
+        jade: { DEFAULT: 'rgb(var(--jade) / <alpha-value>)', claro: 'rgb(var(--jade-claro) / <alpha-value>)' },
+        mango: { DEFAULT: '#F59E0B', claro: 'rgb(var(--mango-claro) / <alpha-value>)' },
         coral: '#E11D48',
-        arena: '#FAFAF7',
+        arena: 'rgb(var(--arena) / <alpha-value>)', // fondo
+        superficie: 'rgb(var(--superficie) / <alpha-value>)', // tarjetas, campos
+        tinta: 'rgb(var(--tinta) / <alpha-value>)', // texto
+        sobrejade: 'rgb(var(--sobrejade) / <alpha-value>)', // texto encima de jade
         // Fondo neutro cálido de la página de clientes (no blanco).
         piedra: '#E4DCCE',
-        tinta: '#1C2B2A',
         whatsapp: '#25D366',
       },
       fontFamily: {

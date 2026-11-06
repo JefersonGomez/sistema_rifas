@@ -8,7 +8,7 @@ export default function Logo({ className = 'h-12 w-12', animado = true }) {
   return (
     <svg viewBox="0 0 64 64" className={className} aria-hidden>
       {/* soporte */}
-      <path d="M32 34 20 56M32 34l12 22M14 56h36" stroke="#1C2B2A" strokeWidth="4" strokeLinecap="round" fill="none" />
+      <path d="M32 34 20 56M32 34l12 22M14 56h36" style={{ stroke: 'rgb(var(--tinta))' }} strokeWidth="4" strokeLinecap="round" fill="none" />
       {/* jaula que gira */}
       <g className={giro} style={centro}>
         <polygon
@@ -25,9 +25,9 @@ export default function Logo({ className = 'h-12 w-12', animado = true }) {
           <circle cx="32" cy="24" r="5" fill="#0F766E" stroke="#fff" strokeWidth="1" />
         </g>
         {/* manivela */}
-        <path d="M52 30h7v-7" stroke="#1C2B2A" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+        <path d="M52 30h7v-7" style={{ stroke: 'rgb(var(--tinta))' }} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" fill="none" />
       </g>
-      <circle cx="32" cy="30" r="3" fill="#1C2B2A" />
+      <circle cx="32" cy="30" r="3" style={{ fill: 'rgb(var(--tinta))' }} />
     </svg>
   );
 }

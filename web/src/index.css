@@ -3,6 +3,27 @@
 @tailwind utilities;
 
 @layer base {
+  /* Colores base en RGB (sin "rgb()") para poder usar transparencias: bg-tinta/50. */
+  :root {
+    --arena: 250 250 247;
+    --superficie: 255 255 255;
+    --tinta: 28 43 42;
+    --jade: 15 118 110;
+    --jade-claro: 204 251 241;
+    --mango-claro: 254 243 199;
+    --sobrejade: 255 255 255;
+  }
+  /* Modo oscuro del panel: fondos oscuros, texto claro y un jade más brillante para que se lea. */
+  .modo-oscuro {
+    --arena: 15 21 20;
+    --superficie: 27 36 35;
+    --tinta: 229 236 234;
+    --jade: 45 212 191;
+    --jade-claro: 19 61 58;
+    --mango-claro: 66 50 16;
+    --sobrejade: 15 21 20;
+    color-scheme: dark;
+  }
   html {
     font-size: 16px;
   }
@@ -17,21 +38,21 @@
     @apply inline-flex min-h-12 items-center justify-center gap-2 rounded-xl px-5 text-lg font-extrabold transition active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50;
   }
   .btn-primario {
-    @apply btn bg-jade text-white hover:bg-jade/90;
+    @apply btn bg-jade text-sobrejade hover:bg-jade/90;
   }
   .btn-secundario {
-    @apply btn border-2 border-jade bg-white text-jade hover:bg-jade-claro;
+    @apply btn border-2 border-jade bg-superficie text-jade hover:bg-jade-claro;
   }
   .btn-peligro {
-    @apply btn border-2 border-coral bg-white text-coral hover:bg-coral/5;
+    @apply btn border-2 border-coral bg-superficie text-coral hover:bg-coral/5;
   }
   .campo {
-    @apply min-h-12 w-full rounded-xl border-2 border-black/10 bg-white px-4 text-lg outline-none transition focus:border-jade;
+    @apply min-h-12 w-full rounded-xl border-2 border-tinta/10 bg-superficie px-4 text-lg outline-none transition focus:border-jade;
   }
   .etiqueta {
     @apply mb-1 block text-base font-bold;
   }
   .tarjeta {
-    @apply rounded-2xl bg-white p-4 shadow-sm;
+    @apply rounded-2xl bg-superficie p-4 shadow-sm;
   }
 }

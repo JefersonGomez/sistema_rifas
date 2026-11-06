@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { Flag, Pencil, Plus, Send } from 'lucide-react';
+import { ChevronRight, Flag, History, Pencil, Plus, Send } from 'lucide-react';
 import { pedir } from '../../api/cliente.js';
 import { useRifas } from '../../hooks/useRifas.js';
 import HojaInferior from '../../components/HojaInferior.jsx';
@@ -10,9 +10,9 @@ import Medalla from '../../components/Medalla.jsx';
 import { formatoColones, formatoFecha, nombreLugar } from '../../utils/formato.js';
 
 const etiquetas = {
-  borrador: ['Borrador', 'bg-black/10 text-tinta'],
-  activa: ['Publicada', 'bg-jade text-white'],
-  finalizada: ['Finalizada', 'bg-tinta text-white'],
+  borrador: ['Borrador', 'bg-tinta/10 text-tinta'],
+  activa: ['Publicada', 'bg-jade text-sobrejade'],
+  finalizada: ['Finalizada', 'bg-tinta text-arena'],
   cancelada: ['Cancelada', 'bg-coral/10 text-coral'],
 };
 
@@ -95,7 +95,7 @@ function TarjetaRifa({ rifa, onFinalizar }) {
         ))}
       </ul>
 
-      <p className="mt-3 border-t border-black/5 pt-3 text-lg">
+      <p className="mt-3 border-t border-tinta/5 pt-3 text-lg">
         <strong>{rifa.vendidos}</strong> de 100 vendidos · <strong className="text-jade">{formatoColones(rifa.cobrado)}</strong> cobrado
       </p>
 
@@ -109,12 +109,22 @@ function TarjetaRifa({ rifa, onFinalizar }) {
               <Send aria-hidden className="h-5 w-5" /> Publicar
             </button>
           ) : (
-            <button type="button" className="btn bg-tinta text-white" onClick={onFinalizar}>
+            <button type="button" className="btn bg-tinta text-arena" onClick={onFinalizar}>
               <Flag aria-hidden className="h-5 w-5" /> Finalizar
             </button>
           )}
         </div>
       )}
+
+      <Link
+        to={`/admin/rifas/${rifa.id}`}
+        className={`btn w-full justify-between px-3 text-jade hover:bg-jade-claro ${rifa.estado === 'finalizada' ? 'mt-3 border-2 border-jade' : 'mt-2'}`}
+      >
+        <span className="flex items-center gap-2">
+          <History aria-hidden className="h-5 w-5" /> Ver historial
+        </span>
+        <ChevronRight aria-hidden className="h-5 w-5" />
+      </Link>
     </li>
   );
 }
@@ -178,7 +188,7 @@ function HojaFinalizar({ rifa, onCerrar }) {
           "sin ganador". Esto no se puede deshacer.
         </p>
         {finalizar.isError && <p className="mt-3 font-bold text-coral">{finalizar.error.message}</p>}
-        <button type="submit" className="btn mt-4 w-full bg-tinta text-white" disabled={!valido || finalizar.isPending}>
+        <button type="submit" className="btn mt-4 w-full bg-tinta text-arena" disabled={!valido || finalizar.isPending}>
           {valido ? 'Finalizar rifa' : 'Escriba los números ganadores'}
         </button>
       </form>

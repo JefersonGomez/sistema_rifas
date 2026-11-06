@@ -38,7 +38,7 @@ export default function PorCobrar() {
         ) : (
           <>
             {pendientes.length} {pendientes.length === 1 ? 'persona debe' : 'personas deben'}{' '}
-            <strong className="text-amber-700">{formatoColones(total)}</strong> en total.
+            <strong className="text-amber-700 dark:text-amber-400">{formatoColones(total)}</strong> en total.
           </>
         )}
       </p>
@@ -77,18 +77,18 @@ function FilaPendiente({ pendiente, rifa }) {
           <p className="text-xl font-extrabold">{cliente.nombre}</p>
           <p className="tabular-nums text-tinta/70">{formatoTelefono(cliente.telefono)}</p>
         </div>
-        <p className="shrink-0 font-titulo text-2xl font-extrabold text-amber-700">{formatoColones(debe)}</p>
+        <p className="shrink-0 font-titulo text-2xl font-extrabold text-amber-700 dark:text-amber-400">{formatoColones(debe)}</p>
       </div>
 
       <div className="mt-3 flex flex-wrap gap-2">
         {numeros.map((n) => (
-          <span key={n.numero} className="rounded-lg border-2 border-mango bg-mango-claro px-2 py-0.5 text-base font-bold tabular-nums text-amber-900">
+          <span key={n.numero} className="rounded-lg border-2 border-mango bg-mango-claro px-2 py-0.5 text-base font-bold tabular-nums text-amber-900 dark:text-amber-200">
             {n.numero} · {formatoColones(n.saldo)}
           </span>
         ))}
       </div>
 
-      <p className={`mt-3 flex items-center gap-1.5 text-base ${recordadoHoy ? 'font-bold text-amber-800' : 'text-tinta/60'}`}>
+      <p className={`mt-3 flex items-center gap-1.5 text-base ${recordadoHoy ? 'font-bold text-amber-800 dark:text-amber-300' : 'text-tinta/60'}`}>
         <Bell aria-hidden className="h-4 w-4" />
         {ultimoRecordatorio
           ? recordadoHoy

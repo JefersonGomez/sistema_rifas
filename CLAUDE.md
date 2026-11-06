@@ -61,6 +61,7 @@ Fuentes: `font-titulo` = Fraunces, `font-sans` = Nunito; para la cuadrícula tam
 Foto del premio: se muestra completa (`object-contain`) en cuadro 4:3, con la misma foto difuminada de relleno.
 Logo: tómbola de bingo animada en SVG (`web/src/components/Logo.jsx`, respeta "reducir movimiento").
 Estados de número: siempre color + forma/ícono (libre: cuadro con borde; elegido: bolita redonda animada; ocupado: gris tachado; apartado: mango claro + reloj; pagado: jade + check).
+Modo oscuro (solo panel): clase `.modo-oscuro` en el contenedor de `Panel.jsx`; los colores `arena`, `superficie`, `tinta`, `jade`, `jade-claro`, `mango-claro` y `sobrejade` son variables CSS en `index.css`. Usar `bg-superficie` (no `bg-white`), `tinta/…` (no `black/…`), `text-sobrejade` sobre `bg-jade`, y `dark:` solo para casos puntuales. Interruptor en `BotonModo.jsx`; se guarda en `localStorage` (`rifas-modo`).
 Usabilidad: texto ≥ 16 px, botones ≥ 48 px, un botón principal por pantalla, verbos en acciones, confirmación antes de liberar/borrar.
 
 ## Flujo de trabajo

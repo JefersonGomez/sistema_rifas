@@ -9,7 +9,7 @@ export default function Opciones({ nombre, opciones, valor, onCambiar }) {
           role="radio"
           aria-checked={valor === o.valor}
           onClick={() => onCambiar(o.valor)}
-          className={`btn px-2 text-base ${valor === o.valor ? 'bg-jade text-white' : 'border-2 border-black/10 bg-white text-tinta'}`}
+          className={`btn px-2 text-base ${valor === o.valor ? 'bg-jade text-sobrejade' : 'border-2 border-tinta/10 bg-superficie text-tinta'}`}
         >
           {o.texto}
         </button>

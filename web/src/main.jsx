@@ -11,6 +11,7 @@ import Talonario from './pages/admin/Talonario.jsx';
 import PorCobrar from './pages/admin/PorCobrar.jsx';
 import Rifas from './pages/admin/Rifas.jsx';
 import FormRifa from './pages/admin/FormRifa.jsx';
+import RifaHistorial from './pages/admin/RifaHistorial.jsx';
 import './index.css';
 
 const router = createBrowserRouter([
@@ -25,6 +26,7 @@ const router = createBrowserRouter([
       { path: 'por-cobrar', element: <PorCobrar /> },
       { path: 'rifas', element: <Rifas /> },
       { path: 'rifas/nueva', element: <FormRifa /> },
+      { path: 'rifas/:id', element: <RifaHistorial /> },
       { path: 'rifas/:id/editar', element: <FormRifa /> },
     ],
   },

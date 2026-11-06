@@ -53,7 +53,7 @@ export default function BuscadorCliente({ onElegir }) {
       </div>
 
       {buscar.length >= 2 && (
-        <ul className="mt-2 divide-y divide-black/5 overflow-hidden rounded-xl bg-white">
+        <ul className="mt-2 divide-y divide-tinta/5 overflow-hidden rounded-xl bg-superficie">
           {clientesQ.isPending && <li className="p-3 text-tinta/60">Buscando…</li>}
           {!clientesQ.isPending && clientes.length === 0 && <li className="p-3 text-tinta/60">No hay clientes con ese nombre.</li>}
           {clientes.map((c) => (

@@ -1,7 +1,7 @@
 // Medalla del lugar: oro (1), plata (2), bronce (3). Siempre con el número, no solo color.
 const colores = {
-  1: 'bg-mango text-tinta ring-amber-300',
-  2: 'bg-slate-300 text-tinta ring-slate-200',
+  1: 'bg-mango text-[#1C2B2A] ring-amber-300',
+  2: 'bg-slate-300 text-[#1C2B2A] ring-slate-200',
   3: 'bg-orange-700 text-white ring-orange-300',
 };
 

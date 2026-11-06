@@ -9,7 +9,7 @@ export default function BotonWhatsApp({ telefono, mensaje, onClick, className = 
       target="_blank"
       rel="noopener noreferrer"
       onClick={onClick}
-      className={`btn bg-whatsapp text-tinta shadow-sm hover:brightness-95 ${className}`}
+      className={`btn bg-whatsapp text-[#1C2B2A] shadow-sm hover:brightness-95 ${className}`}
     >
       <MessageCircle aria-hidden className="h-6 w-6 shrink-0" />
       {children}

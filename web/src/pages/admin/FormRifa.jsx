@@ -129,7 +129,7 @@ function Formulario({ id, inicial, fotoActual, vendidos }) {
 
         <div>
           <p className="etiqueta">Foto del premio (opcional)</p>
-          <label className="flex cursor-pointer items-center gap-4 rounded-xl border-2 border-dashed border-black/15 bg-white p-3 hover:border-jade">
+          <label className="flex cursor-pointer items-center gap-4 rounded-xl border-2 border-dashed border-tinta/15 bg-superficie p-3 hover:border-jade">
             {vistaFoto ? (
               <img src={vistaFoto} alt="Foto del premio" className="h-20 w-20 rounded-lg object-cover" />
             ) : (
@@ -188,7 +188,7 @@ function Premios({ premios, setPremios }) {
       </div>
 
       {premios.map((p, i) => (
-        <div key={i} className="rounded-xl border-2 border-black/5 bg-arena p-3">
+        <div key={i} className="rounded-xl border-2 border-tinta/5 bg-arena p-3">
           <div className="mb-2 flex items-center justify-between">
             <span className="flex items-center gap-2 text-lg font-extrabold">
               <Medalla lugar={i + 1} /> {nombreLugar(i + 1)}
@@ -244,7 +244,7 @@ function Colones({ id, valor, onChange, ...resto }) {
   return (
     <div className="relative">
       <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-lg text-tinta/60">₡</span>
-      <input id={id} className="campo pl-8 tabular-nums disabled:bg-black/5" inputMode="numeric" value={valor} onChange={onChange} {...resto} />
+      <input id={id} className="campo pl-8 tabular-nums disabled:bg-tinta/5" inputMode="numeric" value={valor} onChange={onChange} {...resto} />
     </div>
   );
 }
@@ -307,7 +307,7 @@ function EstiloCuadricula({ f, setF }) {
               aria-checked={f.fuenteNumeros === clave}
               onClick={() => setF((p) => ({ ...p, fuenteNumeros: clave }))}
               className={`flex min-h-16 flex-col items-center justify-center rounded-xl border-2 ${
-                f.fuenteNumeros === clave ? 'border-jade bg-jade-claro' : 'border-black/10 bg-white'
+                f.fuenteNumeros === clave ? 'border-jade bg-jade-claro' : 'border-tinta/10 bg-superficie'
               }`}
             >
               <span className={`text-3xl leading-none ${fu.letra}`}>27</span>

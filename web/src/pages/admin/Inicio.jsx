@@ -34,10 +34,10 @@ export default function Inicio() {
 
   return (
     <div className="space-y-5">
-      <section className="overflow-hidden rounded-3xl bg-gradient-to-br from-jade to-teal-800 p-5 text-white shadow-md">
+      <section className="overflow-hidden rounded-3xl bg-gradient-to-br from-jade to-teal-800 p-5 text-white dark:from-teal-800 dark:to-teal-950 shadow-md">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
-            <p className="text-base font-bold uppercase tracking-wide text-jade-claro">Rifa publicada</p>
+            <p className="text-base font-bold uppercase tracking-wide text-teal-100">Rifa publicada</p>
             <h1 className="font-titulo text-3xl font-extrabold leading-tight">{activa.titulo}</h1>
             {activa.fechaSorteo && <p className="mt-1 text-lg text-white/90">Sorteo el {formatoFecha(activa.fechaSorteo)}</p>}
           </div>
@@ -60,7 +60,7 @@ export default function Inicio() {
 
       <section className="grid grid-cols-2 gap-3">
         <Dato titulo="Cobrado" valor={r ? formatoColones(r.cobrado) : '…'} color="text-jade" />
-        <Dato titulo="Por cobrar" valor={r ? formatoColones(r.pendiente) : '…'} color="text-amber-700" />
+        <Dato titulo="Por cobrar" valor={r ? formatoColones(r.pendiente) : '…'} color="text-amber-700 dark:text-amber-400" />
       </section>
 
       <section className="tarjeta">

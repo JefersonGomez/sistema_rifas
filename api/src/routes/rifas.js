@@ -297,6 +297,87 @@ function errorOcupados(numeros) {
   );
 }
 
+// ---------- Historial ----------
+
+// Todo lo que pasó en una rifa: compradores, deudas, pagos y totales.
+async function datosHistorial(rifa) {
+  const boletos = await prisma.boleto.findMany({
+    where: { rifaId: rifa.id },
+    include: {
+      cliente: { select: { id: true, nombre: true, telefono: true } },
+      pagos: { orderBy: { fecha: 'asc' } },
+    },
+    orderBy: { numero: 'asc' },
+  });
+
+  const resumen = { vendidos: boletos.length, pagados: 0, cobrado: 0, pendiente: 0, efectivo: 0, sinpe: 0, cantidadPagos: 0 };
+  const porCliente = new Map();
+  const pagos = [];
+
+  for (const b of boletos) {
+    const { pagado, saldo } = resumenBoleto(b, rifa.precioNumero);
+    if (b.estado === 'pagado') resumen.pagados++;
+    resumen.cobrado += pagado;
+    resumen.pendiente += saldo;
+    for (const p of b.pagos) {
+      resumen[p.metodo] += p.monto;
+      resumen.cantidadPagos++;
+      pagos.push({ ...p, numero: b.numero, cliente: b.cliente.nombre });
+    }
+
+    const fila = porCliente.get(b.cliente.id) ?? { cliente: b.cliente, numeros: [], pagado: 0, debe: 0 };
+    fila.numeros.push({ numero: b.numero, estado: b.estado, pagado, saldo });
+    fila.pagado += pagado;
+    fila.debe += saldo;
+    porCliente.set(b.cliente.id, fila);
+  }
+
+  const costoPremios = rifa.premios.reduce((t, p) => t + p.costo, 0);
+  const fechas = boletos.map((b) => b.creadoEn.getTime());
+
+  return {
+    rifa: { ...rifa, premios: await ganadoresDe(rifa.id, rifa.premios) },
+    resumen: {
+      ...resumen,
+      apartados: resumen.vendidos - resumen.pagados,
+      libres: 100 - resumen.vendidos,
+      esperado: resumen.vendidos * rifa.precioNumero, // si todos pagan lo vendido
+      costoPremios,
+      ganancia: resumen.cobrado - costoPremios, // con lo cobrado hasta hoy
+      gananciaEsperada: resumen.vendidos * rifa.precioNumero - costoPremios,
+      primeraVenta: fechas.length ? new Date(Math.min(...fechas)) : null,
+      ultimaVenta: fechas.length ? new Date(Math.max(...fechas)) : null,
+    },
+    compradores: [...porCliente.values()].sort((a, b) => b.debe - a.debe || a.cliente.nombre.localeCompare(b.cliente.nombre)),
+    pagos: pagos.sort((a, b) => b.fecha - a.fecha),
+  };
+}
+
+rifasRouter.get('/rifas/:id/historial', async (req, res) => {
+  res.json(await datosHistorial(await buscarRifa(req.params.id)));
+});
+
+// Lista de la rifa en CSV para abrir en Excel (respaldo).
+rifasRouter.get('/rifas/:id/exportar', async (req, res) => {
+  const rifa = await buscarRifa(req.params.id);
+  const { compradores } = await datosHistorial(rifa);
+  const campo = (v) => `"${String(v ?? '').replaceAll('"', '""')}"`;
+
+  const filas = [['Número', 'Cliente', 'Teléfono', 'Estado', 'Pagado', 'Debe']];
+  for (const c of compradores) {
+    for (const n of c.numeros) {
+      filas.push([n.numero, c.cliente.nombre, c.cliente.telefono, n.estado === 'pagado' ? 'Pagado' : 'Apartado', n.pagado, n.saldo]);
+    }
+  }
+  filas.sort((a, b) => (a[0] === 'Número' ? -1 : b[0] === 'Número' ? 1 : a[0].localeCompare(b[0])));
+
+  const nombre = `rifa-${rifa.id}-${rifa.titulo.toLowerCase().normalize('NFD').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')}.csv`;
+  res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+  res.setHeader('Content-Disposition', `attachment; filename="${nombre}"`);
+  // BOM y ";" para que Excel en español lo abra con tildes y en columnas.
+  res.send('﻿' + filas.map((f) => f.map(campo).join(';')).join('\r\n'));
+});
+
 // ---------- Por cobrar ----------
 
 rifasRouter.get('/rifas/:id/pendientes', async (req, res) => {

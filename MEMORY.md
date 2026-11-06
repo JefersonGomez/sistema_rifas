@@ -12,6 +12,8 @@ Siguiente: correr `despliegue/README.md` en el VPS y probar con mamá; luego Eta
 - Visual: medallas oro/plata/bronce (`Medalla.jsx`), tómbola animada cuando no hay foto, precio destacado sobre la foto, barra de vendidos (`BarraAvance.jsx`) en la página pública, Inicio con tarjeta principal (días y avance) y lista de premios.
 - Página de clientes: fondo neutro `piedra` con bolitas que flotan (respeta reducir movimiento), foto del premio completa sin recortes, talonario en tarjeta blanca también en celular.
 - El usuario ya usa el panel: creó la rifa "Licuadora Ninja" (#15). En una prueba se le reemplazó la foto por error; se dejó sin foto (ver memoria de Claude).
+- **Modo claro/oscuro** en el panel con interruptor animado (sol/luna); se recuerda en el teléfono y la primera vez sigue al sistema. La página de clientes no cambia.
+- **Historial de cada rifa** (`/admin/rifas/:id`, botón "Ver historial"): premios y ganadores, recaudado, por cobrar, ganancia, efectivo vs SINPE, compradores, deudores (con recordar) y todos los pagos. Descarga CSV para Excel (`/api/admin/rifas/:id/exportar`, separador `;` con BOM).
 - Usuario temporal de desarrollo `prueba` / `clave-de-prueba-123` en la base de prueba: **borrarlo antes de usar datos reales**.
 
 ## Etapas
