@@ -41,13 +41,10 @@ model Rifa {
   id            Int        @id @default(autoincrement())
   titulo        String
   descripcion   String?
-  premio        String
   fotoUrl       String?    @map("foto_url")
   precioNumero  Int        @map("precio_numero")
-  costoPremio   Int        @default(0) @map("costo_premio")
   fechaSorteo   DateTime?  @map("fecha_sorteo")
   reglaGanador  String?    @map("regla_ganador")
-  numeroGanador String?    @map("numero_ganador") @db.Char(2)
   estado        EstadoRifa @default(borrador)
   sinpeNumero   String?    @map("sinpe_numero")
   whatsapp      String?
@@ -56,10 +53,26 @@ model Rifa {
   creadaEn      DateTime   @default(now()) @map("creada_en")
   finalizadaEn  DateTime?  @map("finalizada_en")
 
+  premios       Premio[]
   boletos       Boleto[]
   recordatorios Recordatorio[]
 
   @@map("rifas")
+}
+
+// 1.º, 2.º y 3.er premio. Cada lugar lo gana el número del mismo premio de la Lotería Nacional.
+model Premio {
+  id            Int     @id @default(autoincrement())
+  rifaId        Int     @map("rifa_id")
+  lugar         Int
+  descripcion   String
+  costo         Int     @default(0)
+  numeroGanador String? @map("numero_ganador") @db.Char(2)
+
+  rifa Rifa @relation(fields: [rifaId], references: [id], onDelete: Cascade)
+
+  @@unique([rifaId, lugar])
+  @@map("premios")
 }
 
 model Cliente {

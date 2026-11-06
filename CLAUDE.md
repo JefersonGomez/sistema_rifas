@@ -26,7 +26,8 @@ App web **Rifas Ivannia** para que mamá maneje rifas de 00 a 99 desde el celula
 - En Windows, `prisma generate` falla (EPERM) si `npm run dev` está corriendo: detenerlo antes de migrar.
 
 ## Modelo de datos (`api/prisma/schema.prisma`)
-Tablas: `admins`, `rifas`, `clientes`, `boletos`, `pagos`, `recordatorios` (columnas en snake_case vía `@map`).
+Tablas: `admins`, `rifas`, `premios`, `clientes`, `boletos`, `pagos`, `recordatorios` (columnas en snake_case vía `@map`).
+- `premios`: 1 a 3 por rifa (`lugar` 1, 2, 3), con `descripcion`, `costo` (privado, para la ganancia) y `numero_ganador`. Único `(rifa_id, lugar)`.
 - `rifas.estado`: borrador | activa | finalizada | cancelada. **Solo una activa** (índice único parcial en la migración).
 - `rifas.color_celdas` / `fuente_numeros`: estilo de la cuadrícula pública. Las opciones deben coincidir en `api/src/schemas.js` y `web/src/utils/temas.js`.
 - `boletos.estado`: apartado | pagado. Único `(rifa_id, numero)`.
@@ -39,8 +40,9 @@ Tablas: `admins`, `rifas`, `clientes`, `boletos`, `pagos`, `recordatorios` (colu
 - Número libre = número 00–99 sin boleto en la rifa activa. Los libres no se guardan.
 - **Un número con pagos NO se puede liberar** (alguien pagó por él). Solo se puede borrar un pago mal ingresado.
 - Un abono no puede pasar del saldo. El precio no cambia si ya hay números vendidos.
-- Ganador: número del primer premio de la Lotería Nacional de Costa Rica.
-- Al finalizar: se guarda `numero_ganador`; si nadie tiene ese número, "sin ganador".
+- Ganadores: cada premio (1.º, 2.º, 3.º) lo gana el número del mismo premio de la Lotería Nacional de Costa Rica.
+- Al finalizar: se guarda un `numero_ganador` por premio y la rifa se cierra siempre. Si nadie tiene un número, ese premio queda "sin ganador"; un nuevo sorteo lo decide quien administra (fuera del sistema).
+- La página pública muestra si cada premio tuvo ganador, nunca quién.
 - Métricas se calculan con consultas, sin tablas extra.
 
 ## Reglas de código

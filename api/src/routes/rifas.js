@@ -14,10 +14,26 @@ export const rifasRouter = Router();
 
 const TODOS_LOS_NUMEROS = Array.from({ length: 100 }, (_, i) => String(i).padStart(2, '0'));
 
+const conPremios = { premios: { orderBy: { lugar: 'asc' } } };
+
 async function buscarRifa(id) {
-  const rifa = await prisma.rifa.findUnique({ where: { id: idParam.parse(id) } });
+  const rifa = await prisma.rifa.findUnique({ where: { id: idParam.parse(id) }, include: conPremios });
   if (!rifa) throw new ErrorApp(404, 'No se encontró la rifa.');
   return rifa;
+}
+
+// [{ descripcion, costo }] → filas para crear, con el lugar según el orden.
+const premiosParaCrear = (premios) => premios.map((p, i) => ({ ...p, lugar: i + 1 }));
+
+// Quién ganó cada premio (null si nadie compró ese número).
+async function ganadoresDe(rifaId, premios) {
+  const numeros = premios.map((p) => p.numeroGanador).filter(Boolean);
+  const boletos = await prisma.boleto.findMany({
+    where: { rifaId, numero: { in: numeros } },
+    select: { numero: true, cliente: { select: { id: true, nombre: true, telefono: true } } },
+  });
+  const porNumero = new Map(boletos.map((b) => [b.numero, b.cliente]));
+  return premios.map((p) => ({ ...p, ganador: p.numeroGanador ? (porNumero.get(p.numeroGanador) ?? null) : null }));
 }
 
 // ---------- Rifas ----------
@@ -25,8 +41,11 @@ async function buscarRifa(id) {
 rifasRouter.get('/rifas', async (_req, res) => {
   const rifas = await prisma.rifa.findMany({
     orderBy: { creadaEn: 'desc' },
-    include: { _count: { select: { boletos: true } } },
+    include: { ...conPremios, _count: { select: { boletos: true } } },
   });
+  for (const r of rifas) {
+    if (r.estado === 'finalizada') r.premios = await ganadoresDe(r.id, r.premios);
+  }
   const cobros = await prisma.$queryRaw`
     SELECT b.rifa_id AS "rifaId", COALESCE(SUM(p.monto), 0)::int AS cobrado
     FROM boletos b LEFT JOIN pagos p ON p.boleto_id = b.id
@@ -43,7 +62,11 @@ rifasRouter.get('/rifas', async (_req, res) => {
 });
 
 rifasRouter.post('/rifas', async (req, res) => {
-  const rifa = await prisma.rifa.create({ data: rifaSchema.parse(req.body) });
+  const { premios, ...datos } = rifaSchema.parse(req.body);
+  const rifa = await prisma.rifa.create({
+    data: { ...datos, premios: { create: premiosParaCrear(premios) } },
+    include: conPremios,
+  });
   res.status(201).json({ rifa });
 });
 
@@ -65,7 +88,17 @@ rifasRouter.patch('/rifas/:id', async (req, res) => {
     }
   }
 
-  res.json({ rifa: await prisma.rifa.update({ where: { id: rifa.id }, data: datos }) });
+  const { premios, ...resto } = datos;
+  // Si vienen premios, se reemplaza la lista completa (1.º, 2.º, 3.º).
+  const actualizada = await prisma.rifa.update({
+    where: { id: rifa.id },
+    data: {
+      ...resto,
+      ...(premios && { premios: { deleteMany: {}, create: premiosParaCrear(premios) } }),
+    },
+    include: conPremios,
+  });
+  res.json({ rifa: actualizada });
 });
 
 rifasRouter.post('/rifas/:id/activar', async (req, res) => {
@@ -91,17 +124,24 @@ rifasRouter.post('/rifas/:id/activar', async (req, res) => {
 rifasRouter.post('/rifas/:id/finalizar', async (req, res) => {
   const rifa = await buscarRifa(req.params.id);
   if (rifa.estado !== 'activa') throw new ErrorApp(409, 'Solo se puede finalizar la rifa publicada.');
-  const { numeroGanador } = finalizarSchema.parse(req.body);
+  const { numerosGanadores } = finalizarSchema.parse(req.body);
+  if (numerosGanadores.length !== rifa.premios.length) {
+    throw new ErrorApp(400, `Escriba el número ganador de cada uno de los ${rifa.premios.length} premios.`);
+  }
 
+  // Se cierra aunque nadie tenga el número: queda registrado "sin ganador".
   const actualizada = await prisma.rifa.update({
     where: { id: rifa.id },
-    data: { estado: 'finalizada', numeroGanador, finalizadaEn: new Date() },
+    data: {
+      estado: 'finalizada',
+      finalizadaEn: new Date(),
+      premios: {
+        update: rifa.premios.map((p, i) => ({ where: { id: p.id }, data: { numeroGanador: numerosGanadores[i] } })),
+      },
+    },
+    include: conPremios,
   });
-  const boletoGanador = await prisma.boleto.findUnique({
-    where: { rifaId_numero: { rifaId: rifa.id, numero: numeroGanador } },
-    include: { cliente: true },
-  });
-  res.json({ rifa: actualizada, ganador: boletoGanador?.cliente ?? null });
+  res.json({ rifa: actualizada, premios: await ganadoresDe(rifa.id, actualizada.premios) });
 });
 
 // ---------- Foto del premio ----------
@@ -148,6 +188,7 @@ rifasRouter.post('/rifas/:id/foto', subida.single('foto'), async (req, res) => {
     const actualizada = await prisma.rifa.update({
       where: { id: rifa.id },
       data: { fotoUrl: `/uploads/${req.file.filename}` },
+      include: conPremios,
     });
     borrarFoto(rifa.fotoUrl);
     res.json({ rifa: actualizada });

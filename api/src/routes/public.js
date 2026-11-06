@@ -22,7 +22,7 @@ const camposPublicos = {
   id: true,
   titulo: true,
   descripcion: true,
-  premio: true,
+  premios: { select: { lugar: true, descripcion: true }, orderBy: { lugar: 'asc' } },
   fotoUrl: true,
   precioNumero: true,
   fechaSorteo: true,
@@ -64,17 +64,27 @@ publicRouter.get('/rifa/ganador', async (_req, res) => {
   const rifa = await prisma.rifa.findFirst({
     where: { estado: 'finalizada' },
     orderBy: { finalizadaEn: 'desc' },
-    select: { id: true, titulo: true, premio: true, fechaSorteo: true, numeroGanador: true },
+    select: {
+      id: true,
+      titulo: true,
+      fechaSorteo: true,
+      premios: { select: { lugar: true, descripcion: true, numeroGanador: true }, orderBy: { lugar: 'asc' } },
+    },
   });
   if (!rifa) return res.json({ resultado: null });
 
-  const boletoGanador = rifa.numeroGanador
-    ? await prisma.boleto.findUnique({
-        where: { rifaId_numero: { rifaId: rifa.id, numero: rifa.numeroGanador } },
-        select: { id: true },
-      })
-    : null;
+  // Solo se dice si alguien tenía el número, nunca quién.
+  const vendidos = await prisma.boleto.findMany({
+    where: { rifaId: rifa.id, numero: { in: rifa.premios.map((p) => p.numeroGanador).filter(Boolean) } },
+    select: { numero: true },
+  });
+  const conDueno = new Set(vendidos.map((b) => b.numero));
 
-  const { id: _id, ...datos } = rifa;
-  res.json({ resultado: { ...datos, hayGanador: Boolean(boletoGanador) } });
+  const { id: _id, premios, ...datos } = rifa;
+  res.json({
+    resultado: {
+      ...datos,
+      premios: premios.map((p) => ({ ...p, hayGanador: conDueno.has(p.numeroGanador) })),
+    },
+  });
 });

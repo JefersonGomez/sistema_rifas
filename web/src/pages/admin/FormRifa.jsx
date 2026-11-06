@@ -1,23 +1,26 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { ChevronLeft, ImagePlus } from 'lucide-react';
+import { ChevronLeft, ImagePlus, Plus, Trash2 } from 'lucide-react';
+import Medalla from '../../components/Medalla.jsx';
 import { pedir } from '../../api/cliente.js';
 import { useRifas } from '../../hooks/useRifas.js';
 import { useAvisos } from '../../components/Avisos.jsx';
 import Cuadricula from '../../components/Cuadricula.jsx';
 import { COLORES, FUENTES } from '../../utils/temas.js';
-import { aFechaInput, formatoTelefono } from '../../utils/formato.js';
+import { aFechaInput, formatoTelefono, nombreLugar } from '../../utils/formato.js';
 
 const WHATSAPP_MAMA = '83260382';
-const REGLA = 'Gana el número del primer premio de la Lotería Nacional de Costa Rica';
+const REGLA = 'Juega con los premios de la Lotería Nacional de Costa Rica.';
+const PREMIO_VACIO = { descripcion: '', costo: '' };
 
 const aFormulario = (r) => ({
   titulo: r.titulo ?? '',
-  premio: r.premio ?? '',
+  premios: r.premios?.length
+    ? r.premios.map((p) => ({ descripcion: p.descripcion, costo: p.costo ? String(p.costo) : '' }))
+    : [PREMIO_VACIO],
   descripcion: r.descripcion ?? '',
   precioNumero: r.precioNumero ? String(r.precioNumero) : '',
-  costoPremio: r.costoPremio ? String(r.costoPremio) : '',
   fechaSorteo: aFechaInput(r.fechaSorteo),
   reglaGanador: r.reglaGanador ?? REGLA,
   whatsapp: r.whatsapp ? formatoTelefono(r.whatsapp) : '',
@@ -80,7 +83,7 @@ function Formulario({ id, inicial, fotoActual, vendidos }) {
       const datos = {
         ...f,
         precioNumero: soloDigitos(f.precioNumero),
-        costoPremio: soloDigitos(f.costoPremio),
+        premios: f.premios.map((p) => ({ descripcion: p.descripcion, costo: soloDigitos(p.costo) })),
         fechaSorteo: f.fechaSorteo || null,
       };
       if (id && vendidos > 0) delete datos.precioNumero;
@@ -119,9 +122,6 @@ function Formulario({ id, inicial, fotoActual, vendidos }) {
         <Campo id="titulo" etiqueta="Título" ayuda='Empiece con "Rifa…", así se lee bien en WhatsApp.'>
           <input id="titulo" className="campo" placeholder="Rifa de la Freidora de aire" value={f.titulo} onChange={cambiar('titulo')} />
         </Campo>
-        <Campo id="premio" etiqueta="Premio">
-          <input id="premio" className="campo" placeholder="Freidora de aire" value={f.premio} onChange={cambiar('premio')} />
-        </Campo>
         <Campo id="descripcion" etiqueta="Descripción (opcional)">
           <textarea id="descripcion" rows={2} className="campo py-3" placeholder="Nueva en caja, 5 litros" value={f.descripcion} onChange={cambiar('descripcion')} />
         </Campo>
@@ -143,19 +143,16 @@ function Formulario({ id, inicial, fotoActual, vendidos }) {
         </div>
       </section>
 
+      <Premios premios={f.premios} setPremios={(premios) => setF((p) => ({ ...p, premios }))} />
+
       <section className="tarjeta space-y-4">
-        <div className="grid grid-cols-2 gap-3">
-          <Campo id="precio" etiqueta="Precio por número" ayuda={vendidos > 0 ? 'No se cambia: ya hay ventas.' : undefined}>
-            <Colones id="precio" valor={f.precioNumero} onChange={cambiar('precioNumero')} disabled={vendidos > 0} placeholder="2000" />
-          </Campo>
-          <Campo id="costo" etiqueta="Costo del premio" ayuda="Para calcular la ganancia.">
-            <Colones id="costo" valor={f.costoPremio} onChange={cambiar('costoPremio')} placeholder="35000" />
-          </Campo>
-        </div>
+        <Campo id="precio" etiqueta="Precio por número" ayuda={vendidos > 0 ? 'No se cambia: ya hay ventas.' : undefined}>
+          <Colones id="precio" valor={f.precioNumero} onChange={cambiar('precioNumero')} disabled={vendidos > 0} placeholder="2000" />
+        </Campo>
         <Campo id="fecha" etiqueta="Fecha del sorteo">
           <input id="fecha" type="date" className="campo" value={f.fechaSorteo} onChange={cambiar('fechaSorteo')} />
         </Campo>
-        <Campo id="regla" etiqueta="Cómo se elige el ganador">
+        <Campo id="regla" etiqueta="Nota sobre el sorteo (opcional)" ayuda="Cada premio lo gana el número del mismo premio de la Lotería Nacional.">
           <input id="regla" className="campo" value={f.reglaGanador} onChange={cambiar('reglaGanador')} />
         </Campo>
         <div className="grid grid-cols-2 gap-3">
@@ -175,6 +172,58 @@ function Formulario({ id, inicial, fotoActual, vendidos }) {
         {guardar.isPending ? 'Guardando…' : id ? 'Guardar cambios' : 'Crear rifa'}
       </button>
     </form>
+  );
+}
+
+// 1.er premio obligatorio; 2.º y 3.º se agregan o quitan.
+function Premios({ premios, setPremios }) {
+  const cambiar = (i, campo) => (e) => setPremios(premios.map((p, j) => (j === i ? { ...p, [campo]: e.target.value } : p)));
+
+  return (
+    <section className="tarjeta space-y-4">
+      <div>
+        <h2 className="text-xl font-extrabold">Premios</h2>
+        <p className="text-base text-tinta/70">Cada premio lo gana el número del mismo premio de la Lotería Nacional.</p>
+      </div>
+
+      {premios.map((p, i) => (
+        <div key={i} className="rounded-xl border-2 border-black/5 bg-arena p-3">
+          <div className="mb-2 flex items-center justify-between">
+            <span className="flex items-center gap-2 text-lg font-extrabold">
+              <Medalla lugar={i + 1} /> {nombreLugar(i + 1)}
+            </span>
+            {i > 0 && i === premios.length - 1 && (
+              <button type="button" className="btn -mr-2 px-3 text-base text-coral" onClick={() => setPremios(premios.slice(0, -1))}>
+                <Trash2 aria-hidden className="h-5 w-5" /> Quitar
+              </button>
+            )}
+          </div>
+          <div className="space-y-3">
+            <Campo id={`premio-${i}`} etiqueta="¿Qué se gana?">
+              <input
+                id={`premio-${i}`}
+                className="campo"
+                placeholder={['Freidora de aire', 'Olla arrocera', '₡5 000'][i]}
+                value={p.descripcion}
+                onChange={cambiar(i, 'descripcion')}
+              />
+            </Campo>
+            <div className="w-1/2">
+              <Campo id={`costo-${i}`} etiqueta="Le costó">
+                <Colones id={`costo-${i}`} valor={p.costo} onChange={cambiar(i, 'costo')} placeholder="0" />
+              </Campo>
+            </div>
+          </div>
+        </div>
+      ))}
+
+      {premios.length < 3 && (
+        <button type="button" className="btn-secundario w-full" onClick={() => setPremios([...premios, PREMIO_VACIO])}>
+          <Plus aria-hidden className="h-5 w-5" /> Agregar {nombreLugar(premios.length + 1)}
+        </button>
+      )}
+      <p className="text-base text-tinta/60">"Le costó" sirve para calcular la ganancia; nadie más lo ve.</p>
+    </section>
   );
 }
 

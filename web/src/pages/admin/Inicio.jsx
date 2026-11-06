@@ -2,6 +2,7 @@ import { Link } from 'react-router';
 import { ExternalLink, Plus, Ticket, Wallet } from 'lucide-react';
 import { useRifas, useTalonario } from '../../hooks/useRifas.js';
 import BotonWhatsApp from '../../components/BotonWhatsApp.jsx';
+import Medalla from '../../components/Medalla.jsx';
 import { diasHasta, formatoColones, formatoFecha } from '../../utils/formato.js';
 import { mensajeCompartirLibres } from '../../utils/mensajesWhatsApp.js';
 
@@ -33,20 +34,44 @@ export default function Inicio() {
 
   return (
     <div className="space-y-5">
-      <section>
-        <p className="text-base font-bold uppercase tracking-wide text-jade">Rifa publicada</p>
-        <h1 className="font-titulo text-3xl font-extrabold leading-tight">{activa.titulo}</h1>
-        {activa.fechaSorteo && <p className="mt-1 text-lg">Sorteo el {formatoFecha(activa.fechaSorteo)}</p>}
+      <section className="overflow-hidden rounded-3xl bg-gradient-to-br from-jade to-teal-800 p-5 text-white shadow-md">
+        <div className="flex items-start justify-between gap-3">
+          <div className="min-w-0">
+            <p className="text-base font-bold uppercase tracking-wide text-jade-claro">Rifa publicada</p>
+            <h1 className="font-titulo text-3xl font-extrabold leading-tight">{activa.titulo}</h1>
+            {activa.fechaSorteo && <p className="mt-1 text-lg text-white/90">Sorteo el {formatoFecha(activa.fechaSorteo)}</p>}
+          </div>
+          {dias !== null && (
+            <div className="shrink-0 rounded-2xl bg-white/15 px-3 py-2 text-center">
+              <p className="font-titulo text-3xl font-extrabold leading-none tabular-nums">
+                {dias > 0 ? dias : dias === 0 ? '¡Hoy!' : '—'}
+              </p>
+              <p className="text-base font-bold">{dias > 0 ? (dias === 1 ? 'día' : 'días') : dias === 0 ? 'sorteo' : 'ya pasó'}</p>
+            </div>
+          )}
+        </div>
+        <p className="mt-4 text-lg">
+          <strong className="font-titulo text-2xl">{r ? r.vendidos : '…'}</strong> de 100 números vendidos
+        </p>
+        <div className="mt-2 h-3 overflow-hidden rounded-full bg-white/20">
+          <div className="h-full rounded-full bg-mango transition-[width] duration-700" style={{ width: `${r?.vendidos ?? 0}%` }} />
+        </div>
       </section>
 
       <section className="grid grid-cols-2 gap-3">
-        <Dato titulo="Vendidos" valor={r ? `${r.vendidos} de 100` : '…'} />
-        <Dato
-          titulo="Días para el sorteo"
-          valor={dias === null ? '—' : dias > 0 ? dias : dias === 0 ? '¡Hoy!' : 'Ya pasó'}
-        />
         <Dato titulo="Cobrado" valor={r ? formatoColones(r.cobrado) : '…'} color="text-jade" />
-        <Dato titulo="Pendiente" valor={r ? formatoColones(r.pendiente) : '…'} color="text-amber-700" />
+        <Dato titulo="Por cobrar" valor={r ? formatoColones(r.pendiente) : '…'} color="text-amber-700" />
+      </section>
+
+      <section className="tarjeta">
+        <h2 className="mb-2 text-lg font-extrabold">Premios</h2>
+        <ul className="space-y-2">
+          {activa.premios.map((p) => (
+            <li key={p.lugar} className="flex items-center gap-3 text-lg">
+              <Medalla lugar={p.lugar} /> {p.descripcion}
+            </li>
+          ))}
+        </ul>
       </section>
 
       <section className="space-y-3">

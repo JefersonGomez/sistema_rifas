@@ -83,17 +83,20 @@ async function main() {
   const pasada = await prisma.rifa.create({
     data: {
       titulo: 'Rifa del Combo de ollas',
-      premio: 'Combo de 5 ollas de acero',
       precioNumero: 1000,
-      costoPremio: 45000,
       fechaSorteo: new Date('2026-10-18T19:00:00-06:00'),
-      reglaGanador: 'Gana el número del primer premio de la Lotería Nacional de Costa Rica',
-      numeroGanador: '42',
+      reglaGanador: 'Juega con los premios de la Lotería Nacional de Costa Rica.',
       estado: 'finalizada',
       sinpeNumero: '83260382',
       whatsapp: '83260382',
       creadaEn: new Date('2026-09-20T10:00:00-06:00'),
       finalizadaEn: new Date('2026-10-18T21:00:00-06:00'),
+      premios: {
+        create: [
+          { lugar: 1, descripcion: 'Combo de 5 ollas de acero', costo: 45000, numeroGanador: '42' },
+          { lugar: 2, descripcion: 'Licuadora', costo: 15000, numeroGanador: '07' },
+        ],
+      },
     },
   });
   await venderNumeros(pasada, clientes, 92, { todoPagado: true });
@@ -102,12 +105,17 @@ async function main() {
     data: {
       titulo: 'Rifa de la Freidora de aire',
       descripcion: 'Freidora de aire de 5 litros, nueva en caja.',
-      premio: 'Freidora de aire',
       precioNumero: 2000,
-      costoPremio: 35000,
       fechaSorteo: new Date('2026-11-15T19:00:00-06:00'),
-      reglaGanador: 'Gana el número del primer premio de la Lotería Nacional de Costa Rica',
+      reglaGanador: 'Juega con los premios de la Lotería Nacional de Costa Rica.',
       estado: 'activa',
+      premios: {
+        create: [
+          { lugar: 1, descripcion: 'Freidora de aire', costo: 35000 },
+          { lugar: 2, descripcion: 'Olla arrocera', costo: 12000 },
+          { lugar: 3, descripcion: '₡5 000 en efectivo', costo: 5000 },
+        ],
+      },
       sinpeNumero: '83260382',
       whatsapp: '83260382',
     },

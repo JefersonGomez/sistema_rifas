@@ -39,4 +39,7 @@ export const formatoTelefono = (tel) => `${tel.slice(0, 4)}-${tel.slice(4)}`;
 export const unirLista = (items) =>
   items.length <= 1 ? items.join('') : `${items.slice(0, -1).join(', ')} y ${items.at(-1)}`;
 
-export const primerNombre = (nombre) => nombre.trim().split(/\s+/)[0];
+// 1 → "1.er premio", 2 → "2.º premio", 3 → "3.er premio"
+export const nombreLugar = (lugar) => `${lugar}.${lugar === 2 ? 'º' : 'er'} premio`;
+
+export const primerNombre =(nombre) => nombre.trim().split(/\s+/)[0];

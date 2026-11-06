@@ -1,12 +1,13 @@
 import { useState } from 'react';
 import { Link } from 'react-router';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { Flag, Pencil, Plus, Send, Trophy } from 'lucide-react';
+import { Flag, Pencil, Plus, Send } from 'lucide-react';
 import { pedir } from '../../api/cliente.js';
 import { useRifas } from '../../hooks/useRifas.js';
 import HojaInferior from '../../components/HojaInferior.jsx';
 import { useAvisos } from '../../components/Avisos.jsx';
-import { formatoColones, formatoFecha } from '../../utils/formato.js';
+import Medalla from '../../components/Medalla.jsx';
+import { formatoColones, formatoFecha, nombreLugar } from '../../utils/formato.js';
 
 const etiquetas = {
   borrador: ['Borrador', 'bg-black/10 text-tinta'],
@@ -73,14 +74,30 @@ function TarjetaRifa({ rifa, onFinalizar }) {
         </div>
       </div>
 
-      <p className="mt-3 text-lg">
+      <ul className="mt-3 space-y-1.5">
+        {rifa.premios.map((p) => (
+          <li key={p.lugar} className="flex items-center gap-2 text-lg">
+            <Medalla lugar={p.lugar} className="h-7 w-7 text-sm" />
+            <span className="min-w-0 flex-1">
+              {p.descripcion}
+              {rifa.estado === 'finalizada' && (
+                <span className="block text-base">
+                  Número <strong className="tabular-nums">{p.numeroGanador}</strong> ·{' '}
+                  {p.ganador ? (
+                    <strong className="text-jade">{p.ganador.nombre}</strong>
+                  ) : (
+                    <span className="text-tinta/60">sin ganador</span>
+                  )}
+                </span>
+              )}
+            </span>
+          </li>
+        ))}
+      </ul>
+
+      <p className="mt-3 border-t border-black/5 pt-3 text-lg">
         <strong>{rifa.vendidos}</strong> de 100 vendidos · <strong className="text-jade">{formatoColones(rifa.cobrado)}</strong> cobrado
       </p>
-      {rifa.estado === 'finalizada' && (
-        <p className="mt-1 flex items-center gap-2 text-lg">
-          <Trophy aria-hidden className="h-5 w-5 text-mango" /> Número ganador: <strong className="tabular-nums">{rifa.numeroGanador}</strong>
-        </p>
-      )}
 
       {(rifa.estado === 'borrador' || rifa.estado === 'activa') && (
         <div className="mt-4 grid grid-cols-2 gap-3">
@@ -105,14 +122,19 @@ function TarjetaRifa({ rifa, onFinalizar }) {
 function HojaFinalizar({ rifa, onCerrar }) {
   const queryClient = useQueryClient();
   const avisar = useAvisos();
-  const [numero, setNumero] = useState('');
-  const valido = /^\d{1,2}$/.test(numero);
-  const ganador = numero.padStart(2, '0');
+  const [numeros, setNumeros] = useState(() => rifa.premios.map(() => ''));
+  const valido = numeros.every((n) => /^\d{1,2}$/.test(n));
+  const ganadores = numeros.map((n) => n.padStart(2, '0'));
 
   const finalizar = useMutation({
-    mutationFn: () => pedir(`/admin/rifas/${rifa.id}/finalizar`, { metodo: 'POST', datos: { numeroGanador: ganador } }),
+    mutationFn: () => pedir(`/admin/rifas/${rifa.id}/finalizar`, { metodo: 'POST', datos: { numerosGanadores: ganadores } }),
     onSuccess: (d) => {
-      avisar(d.ganador ? `Rifa finalizada. Ganó ${d.ganador.nombre} con el ${ganador}.` : `Rifa finalizada. Nadie tenía el ${ganador}.`);
+      const con = d.premios.filter((p) => p.ganador);
+      avisar(
+        con.length === 0
+          ? 'Rifa finalizada. No hubo ganador: nadie tenía esos números.'
+          : `Rifa finalizada. ${con.map((p) => `${nombreLugar(p.lugar)}: ${p.ganador.nombre}`).join(' · ')}`,
+      );
       queryClient.invalidateQueries({ queryKey: ['admin'] });
       queryClient.invalidateQueries({ queryKey: ['public'] });
       onCerrar();
@@ -128,24 +150,36 @@ function HojaFinalizar({ rifa, onCerrar }) {
         }}
       >
         <p className="text-lg">
-          Escriba el número del <strong>primer premio de la Lotería Nacional</strong> para la rifa "{rifa.titulo}".
+          Escriba los números que salieron en la <strong>Lotería Nacional</strong> para "{rifa.titulo}".
         </p>
-        <input
-          className="campo mt-4 h-20 text-center font-titulo text-5xl font-extrabold tabular-nums"
-          inputMode="numeric"
-          maxLength={2}
-          placeholder="00"
-          aria-label="Número ganador"
-          value={numero}
-          onChange={(e) => setNumero(e.target.value.replace(/\D/g, ''))}
-          autoFocus
-        />
-        <p className="mt-3 rounded-xl bg-mango-claro p-3 text-base">
-          Al finalizar, la rifa se cierra y ya no se pueden vender números. Esto no se puede deshacer.
+        <div className="mt-4 space-y-3">
+          {rifa.premios.map((p, i) => (
+            <label key={p.lugar} className="flex items-center gap-3">
+              <Medalla lugar={p.lugar} />
+              <span className="min-w-0 flex-1">
+                <span className="block text-lg font-extrabold">{nombreLugar(p.lugar)}</span>
+                <span className="block truncate text-base text-tinta/70">{p.descripcion}</span>
+              </span>
+              <input
+                className="campo h-16 w-24 text-center font-titulo text-4xl font-extrabold tabular-nums"
+                inputMode="numeric"
+                maxLength={2}
+                placeholder="00"
+                aria-label={`Número del ${nombreLugar(p.lugar)}`}
+                value={numeros[i]}
+                onChange={(e) => setNumeros(numeros.map((n, j) => (j === i ? e.target.value.replace(/\D/g, '') : n)))}
+                autoFocus={i === 0}
+              />
+            </label>
+          ))}
+        </div>
+        <p className="mt-4 rounded-xl bg-mango-claro p-3 text-base">
+          Al finalizar, la rifa se cierra y ya no se pueden vender números. Si nadie tiene un número, queda como
+          "sin ganador". Esto no se puede deshacer.
         </p>
         {finalizar.isError && <p className="mt-3 font-bold text-coral">{finalizar.error.message}</p>}
         <button type="submit" className="btn mt-4 w-full bg-tinta text-white" disabled={!valido || finalizar.isPending}>
-          {valido ? `Finalizar con el ${ganador}` : 'Escriba el número ganador'}
+          {valido ? 'Finalizar rifa' : 'Escriba los números ganadores'}
         </button>
       </form>
     </HojaInferior>

@@ -61,6 +61,16 @@ const fecha = z
   .nullable()
   .optional();
 
+// Cada premio de la lista: la posición define el lugar (1.º, 2.º, 3.º).
+const premio = z.object({
+  descripcion: z
+    .string({ error: 'Escriba cuál es el premio.' })
+    .trim()
+    .min(2, 'Escriba cuál es el premio.')
+    .max(100, 'El premio puede tener máximo 100 letras.'),
+  costo: colones('El costo del premio').nonnegative('El costo del premio no puede ser negativo.').default(0),
+});
+
 const camposRifa = {
   titulo: z
     .string({ error: 'Escriba el título de la rifa.' })
@@ -68,13 +78,11 @@ const camposRifa = {
     .min(3, 'Escriba el título de la rifa, por ejemplo "Rifa de la Freidora de aire".')
     .max(100, 'El título puede tener máximo 100 letras.'),
   descripcion: textoOpcional(500, 'La descripción'),
-  premio: z
-    .string({ error: 'Escriba cuál es el premio.' })
-    .trim()
-    .min(2, 'Escriba cuál es el premio.')
-    .max(100, 'El premio puede tener máximo 100 letras.'),
+  premios: z
+    .array(premio, { error: 'Escriba cuál es el premio.' })
+    .min(1, 'Escriba cuál es el premio.')
+    .max(3, 'Puede haber máximo 3 premios: 1.º, 2.º y 3.º.'),
   precioNumero: colones('El precio por número').positive('El precio por número debe ser mayor a cero.'),
-  costoPremio: colones('El costo del premio').nonnegative('El costo del premio no puede ser negativo.'),
   fechaSorteo: fecha,
   reglaGanador: textoOpcional(200, 'La regla del ganador'),
   whatsapp: telefonoOpcional,
@@ -85,7 +93,6 @@ const camposRifa = {
 
 export const rifaSchema = z.object({
   ...camposRifa,
-  costoPremio: camposRifa.costoPremio.default(0),
   colorCeldas: camposRifa.colorCeldas.default('jade'),
   fuenteNumeros: camposRifa.fuenteNumeros.default('nunito'),
 });
@@ -93,7 +100,10 @@ export const rifaSchema = z.object({
 // Al editar todo es opcional y sin valores por defecto: no se sobrescribe lo que no viene.
 export const rifaEditarSchema = z.object(camposRifa).partial();
 
-export const finalizarSchema = z.object({ numeroGanador: numero });
+// Un número ganador por cada premio, en orden: [1.º, 2.º, 3.º].
+export const finalizarSchema = z.object({
+  numerosGanadores: z.array(numero, { error: 'Escriba los números ganadores.' }).min(1).max(3),
+});
 
 export const ventaSchema = z.object({
   clienteId: id('elegir el cliente'),

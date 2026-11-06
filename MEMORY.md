@@ -6,6 +6,12 @@ Bitácora de avance. Actualizar al cerrar cada tarea o etapa.
 **Etapa 4 — Despliegue: código y guía listos (2026-11-03). Falta ejecutarla en el VPS** (no hay acceso desde aquí).
 Siguiente: correr `despliegue/README.md` en el VPS y probar con mamá; luego Etapa 5 — Historial y métricas.
 
+**2026-11-06 — Premios 1.º/2.º/3.º y mejoras visuales:**
+- Tabla `premios` (1 a 3 por rifa). Migración `20261106120000_premios` pasó el premio de cada rifa al 1.er lugar sin perder datos y quitó `rifas.premio`, `costo_premio`, `numero_ganador`.
+- Finalizar pide un número por premio; la rifa se cierra siempre. Premio sin dueño = "sin ganador"; el nuevo sorteo lo decide quien administra (decisión del usuario).
+- Visual: medallas oro/plata/bronce (`Medalla.jsx`), tómbola animada cuando no hay foto, precio destacado sobre la foto, barra de vendidos (`BarraAvance.jsx`) en la página pública, Inicio con tarjeta principal (días y avance) y lista de premios.
+- Usuario temporal de desarrollo `prueba` / `clave-de-prueba-123` en la base de prueba: **borrarlo antes de usar datos reales**.
+
 ## Etapas
 ### 1. Base del proyecto ✅
 - [x] Monorepo (npm workspaces `api`, `web`), `CLAUDE.md`, Tailwind con paleta y fuentes

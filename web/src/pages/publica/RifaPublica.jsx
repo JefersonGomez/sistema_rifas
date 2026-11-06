@@ -4,9 +4,11 @@ import { CalendarDays, Gift, Ticket, Trophy, Wallet, X } from 'lucide-react';
 import { pedir } from '../../api/cliente.js';
 import Cuadricula from '../../components/Cuadricula.jsx';
 import BotonWhatsApp from '../../components/BotonWhatsApp.jsx';
-import { Marca } from '../../components/Logo.jsx';
+import Logo, { Marca } from '../../components/Logo.jsx';
+import BarraAvance from '../../components/BarraAvance.jsx';
 import { temaDe } from '../../utils/temas.js';
-import { formatoColones, formatoFecha, formatoTelefono, unirLista } from '../../utils/formato.js';
+import Medalla from '../../components/Medalla.jsx';
+import { formatoColones, formatoFecha, formatoTelefono, nombreLugar, unirLista } from '../../utils/formato.js';
 import { mensajeApartar } from '../../utils/mensajesWhatsApp.js';
 
 export default function RifaPublica() {
@@ -81,7 +83,9 @@ function RifaActiva({ rifa }) {
                 </>
               )}
             </p>
-            <p className="mb-4 mt-1 text-center text-lg">Toque los números que quiere y apártelos por WhatsApp.</p>
+            <BarraAvance vendidos={100 - numerosQ.data.libres} className="mx-auto mt-3 max-w-xs" />
+            <p className="mt-1 text-center text-base text-tinta/70">{100 - numerosQ.data.libres} de 100 vendidos</p>
+            <p className="mb-4 mt-3 text-center text-lg">Toque los números que quiere y apártelos por WhatsApp.</p>
             <Leyenda tema={tema} />
             <Cuadricula celdas={celdas} tema={tema} />
           </>
@@ -103,19 +107,44 @@ function RifaActiva({ rifa }) {
 }
 
 function Premio({ rifa }) {
+  const [principal, ...otros] = rifa.premios;
   return (
     <section className="overflow-hidden rounded-3xl bg-white shadow-sm">
-      {rifa.fotoUrl ? (
-        <img src={rifa.fotoUrl} alt={rifa.premio} className="aspect-[4/3] w-full object-cover" />
-      ) : (
-        <div className="flex aspect-[2/1] items-center justify-center bg-jade-claro">
-          <Gift aria-hidden className="h-20 w-20 text-jade" strokeWidth={1.5} />
-        </div>
-      )}
+      <div className="relative">
+        {rifa.fotoUrl ? (
+          <img src={rifa.fotoUrl} alt={principal?.descripcion ?? rifa.titulo} className="aspect-[4/3] w-full object-cover" />
+        ) : (
+          // Sin foto: la tómbola girando sobre un fondo alegre.
+          <div className="flex aspect-[2/1] items-center justify-center bg-gradient-to-br from-jade-claro via-white to-mango-claro">
+            <Logo className="h-32 w-32 drop-shadow-sm" />
+          </div>
+        )}
+        <span className="absolute right-3 top-3 rounded-full bg-tinta/85 px-4 py-1.5 text-lg font-extrabold text-white shadow-lg backdrop-blur">
+          {formatoColones(rifa.precioNumero)}
+        </span>
+      </div>
       <div className="p-5">
         <p className="text-base font-bold uppercase tracking-wide text-jade">{rifa.titulo}</p>
-        <h1 className="mt-1 font-titulo text-4xl font-extrabold leading-tight">{rifa.premio}</h1>
+        {otros.length > 0 && (
+          <p className="mt-2 flex items-center gap-2 text-lg font-bold">
+            <Medalla lugar={1} className="h-7 w-7 text-sm" /> {nombreLugar(1)}
+          </p>
+        )}
+        <h1 className="mt-1 font-titulo text-4xl font-extrabold leading-tight">{principal?.descripcion}</h1>
         {rifa.descripcion && <p className="mt-2 text-lg">{rifa.descripcion}</p>}
+
+        {otros.length > 0 && (
+          <ul className="mt-4 space-y-2 rounded-2xl bg-arena p-3">
+            {otros.map((p) => (
+              <li key={p.lugar} className="flex items-center gap-3 text-lg">
+                <Medalla lugar={p.lugar} />
+                <span>
+                  <span className="font-bold">{nombreLugar(p.lugar)}:</span> {p.descripcion}
+                </span>
+              </li>
+            ))}
+          </ul>
+        )}
 
         <ul className="mt-4 space-y-2 text-lg">
           <Dato icono={Ticket}>
@@ -126,7 +155,12 @@ function Premio({ rifa }) {
               Sorteo el <strong>{formatoFecha(rifa.fechaSorteo)}</strong>
             </Dato>
           )}
-          {rifa.reglaGanador && <Dato icono={Trophy}>{rifa.reglaGanador}</Dato>}
+          <Dato icono={Trophy}>
+            {rifa.premios.length === 1
+              ? 'Gana el número del primer premio de la Lotería Nacional.'
+              : 'Cada premio lo gana el número del mismo premio de la Lotería Nacional.'}
+            {rifa.reglaGanador && <span className="block text-base text-tinta/70">{rifa.reglaGanador}</span>}
+          </Dato>
         </ul>
       </div>
     </section>
@@ -195,14 +229,29 @@ function SinRifaActiva() {
         <section className="mb-10 rounded-3xl bg-white p-6 shadow-sm">
           <Trophy aria-hidden className="mx-auto h-12 w-12 text-mango" />
           <p className="mt-2 text-lg">{resultado.titulo}</p>
-          <h1 className="mt-1 font-titulo text-2xl font-extrabold">Número ganador</h1>
-          <p className="my-3 font-titulo text-8xl font-extrabold tabular-nums text-jade">{resultado.numeroGanador}</p>
+          <h1 className="mt-1 font-titulo text-3xl font-extrabold">
+            {resultado.premios.length === 1 ? 'Número ganador' : 'Números ganadores'}
+          </h1>
           {resultado.fechaSorteo && <p className="text-lg">Sorteo del {formatoFecha(resultado.fechaSorteo)}</p>}
-          <p className="mt-3 text-lg font-bold">
-            {resultado.hayGanador
-              ? `¡Felicidades a la persona ganadora del premio: ${resultado.premio}!`
-              : 'Ese número no se vendió: esta vez no hubo ganador.'}
-          </p>
+
+          <ul className="mt-5 space-y-3 text-left">
+            {resultado.premios.map((p) => (
+              <li key={p.lugar} className="flex items-center gap-4 rounded-2xl bg-arena p-3">
+                <span className="w-20 shrink-0 text-center font-titulo text-5xl font-extrabold tabular-nums text-jade">
+                  {p.numeroGanador}
+                </span>
+                <span className="min-w-0">
+                  <span className="flex items-center gap-2 text-lg font-extrabold">
+                    <Medalla lugar={p.lugar} className="h-6 w-6 text-sm" /> {nombreLugar(p.lugar)}
+                  </span>
+                  <span className="block text-lg">{p.descripcion}</span>
+                  <span className={`block text-base ${p.hayGanador ? 'font-bold text-jade' : 'text-tinta/60'}`}>
+                    {p.hayGanador ? '¡Tiene ganador!' : 'Ese número no se vendió: sin ganador.'}
+                  </span>
+                </span>
+              </li>
+            ))}
+          </ul>
         </section>
       )}
       <Gift aria-hidden className="mx-auto h-14 w-14 text-jade" strokeWidth={1.5} />
