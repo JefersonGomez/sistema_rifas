@@ -6,6 +6,7 @@ import Cuadricula from '../../components/Cuadricula.jsx';
 import BotonWhatsApp from '../../components/BotonWhatsApp.jsx';
 import Logo, { Marca } from '../../components/Logo.jsx';
 import BarraAvance from '../../components/BarraAvance.jsx';
+import FondoAnimado from '../../components/FondoAnimado.jsx';
 import { temaDe } from '../../utils/temas.js';
 import Medalla from '../../components/Medalla.jsx';
 import { formatoColones, formatoFecha, formatoTelefono, nombreLugar, unirLista } from '../../utils/formato.js';
@@ -16,7 +17,9 @@ export default function RifaPublica() {
   const rifa = rifaQ.data?.rifa;
 
   return (
-    <>
+    // isolate: el fondo animado queda detrás del contenido, pero sobre el color neutro.
+    <div className="relative isolate min-h-dvh bg-piedra">
+      <FondoAnimado />
       <header className="mx-auto flex max-w-xl justify-center px-4 pt-5 md:max-w-6xl md:justify-start lg:px-8">
         <Marca />
       </header>
@@ -29,7 +32,7 @@ export default function RifaPublica() {
       ) : (
         <SinRifaActiva />
       )}
-    </>
+    </div>
   );
 }
 
@@ -73,7 +76,7 @@ function RifaActiva({ rifa }) {
         <Premio rifa={rifa} />
       </div>
 
-      <section className="mt-6 md:mt-0 md:rounded-3xl md:bg-white md:p-6 md:shadow-sm" aria-label="Talonario">
+      <section className="mt-5 rounded-3xl bg-white px-3 py-5 shadow-sm md:mt-0 md:p-6" aria-label="Talonario">
         {numerosQ.isError ? (
           <ErrorCarga mensaje={numerosQ.error.message} onReintentar={numerosQ.refetch} />
         ) : !numerosQ.data ? (
@@ -119,7 +122,16 @@ function Premio({ rifa }) {
     <section className="overflow-hidden rounded-3xl bg-white shadow-sm">
       <div className="relative">
         {rifa.fotoUrl ? (
-          <img src={rifa.fotoUrl} alt={principal?.descripcion ?? rifa.titulo} className="aspect-[4/3] w-full object-cover" />
+          // La foto se ve completa (sin recortes) sea horizontal o vertical. El espacio que sobra
+          // se rellena con la misma foto difuminada, así el cuadro nunca queda con franjas vacías.
+          <div className="relative aspect-[4/3] w-full overflow-hidden bg-tinta/10">
+            <img src={rifa.fotoUrl} alt="" aria-hidden className="absolute inset-0 h-full w-full scale-125 object-cover opacity-70 blur-2xl" />
+            <img
+              src={rifa.fotoUrl}
+              alt={principal?.descripcion ?? rifa.titulo}
+              className="relative h-full w-full object-contain drop-shadow-xl"
+            />
+          </div>
         ) : (
           // Sin foto: la tómbola girando sobre un fondo alegre.
           <div className="flex aspect-[2/1] items-center justify-center bg-gradient-to-br from-jade-claro via-white to-mango-claro">

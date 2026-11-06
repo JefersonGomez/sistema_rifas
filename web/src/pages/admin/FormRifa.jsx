@@ -10,7 +10,8 @@ import Cuadricula from '../../components/Cuadricula.jsx';
 import { COLORES, FUENTES } from '../../utils/temas.js';
 import { aFechaInput, formatoTelefono, nombreLugar } from '../../utils/formato.js';
 
-const WHATSAPP_MAMA = '83260382';
+const WHATSAPP_MAMA = '83260482';
+const SINPE_MAMA = '83260382';
 const REGLA = 'Juega con los premios de la Lotería Nacional de Costa Rica.';
 const PREMIO_VACIO = { descripcion: '', costo: '' };
 
@@ -45,7 +46,7 @@ export default function FormRifa() {
     ? aFormulario(rifaQ.data.rifa)
     : aFormulario({
         whatsapp: ultima?.whatsapp ?? WHATSAPP_MAMA,
-        sinpeNumero: ultima?.sinpeNumero ?? WHATSAPP_MAMA,
+        sinpeNumero: ultima?.sinpeNumero ?? SINPE_MAMA,
         reglaGanador: ultima?.reglaGanador ?? REGLA,
         colorCeldas: ultima?.colorCeldas,
         fuenteNumeros: ultima?.fuenteNumeros,

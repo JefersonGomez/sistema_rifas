@@ -8,6 +8,8 @@ export default {
         mango: { DEFAULT: '#F59E0B', claro: '#FEF3C7' },
         coral: '#E11D48',
         arena: '#FAFAF7',
+        // Fondo neutro cálido de la página de clientes (no blanco).
+        piedra: '#E4DCCE',
         tinta: '#1C2B2A',
         whatsapp: '#25D366',
       },
@@ -34,6 +36,12 @@ export default {
           to: { transform: 'translateY(0)' },
         },
         aparecer: { from: { opacity: 0 }, to: { opacity: 1 } },
+        // Bolitas del fondo: suben y bajan muy despacio.
+        flotar: {
+          '0%': { transform: 'translate(0, 0) rotate(0deg)' },
+          '50%': { transform: 'translate(12px, -28px) rotate(12deg)' },
+          '100%': { transform: 'translate(0, 0) rotate(0deg)' },
+        },
       },
       animation: {
         girar: 'girar 3.2s linear infinite',
@@ -41,6 +49,7 @@ export default {
         saltar: 'saltar 0.8s ease-in-out infinite',
         subir: 'subir 0.25s ease-out',
         aparecer: 'aparecer 0.2s ease-out',
+        flotar: 'flotar 20s ease-in-out infinite',
       },
     },
   },

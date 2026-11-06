@@ -10,6 +10,8 @@ Siguiente: correr `despliegue/README.md` en el VPS y probar con mamá; luego Eta
 - Tabla `premios` (1 a 3 por rifa). Migración `20261106120000_premios` pasó el premio de cada rifa al 1.er lugar sin perder datos y quitó `rifas.premio`, `costo_premio`, `numero_ganador`.
 - Finalizar pide un número por premio; la rifa se cierra siempre. Premio sin dueño = "sin ganador"; el nuevo sorteo lo decide quien administra (decisión del usuario).
 - Visual: medallas oro/plata/bronce (`Medalla.jsx`), tómbola animada cuando no hay foto, precio destacado sobre la foto, barra de vendidos (`BarraAvance.jsx`) en la página pública, Inicio con tarjeta principal (días y avance) y lista de premios.
+- Página de clientes: fondo neutro `piedra` con bolitas que flotan (respeta reducir movimiento), foto del premio completa sin recortes, talonario en tarjeta blanca también en celular.
+- El usuario ya usa el panel: creó la rifa "Licuadora Ninja" (#15). En una prueba se le reemplazó la foto por error; se dejó sin foto (ver memoria de Claude).
 - Usuario temporal de desarrollo `prueba` / `clave-de-prueba-123` en la base de prueba: **borrarlo antes de usar datos reales**.
 
 ## Etapas
@@ -81,7 +83,7 @@ Siguiente: correr `despliegue/README.md` en el VPS y probar con mamá; luego Eta
 ## Pendientes / notas
 - `npm audit`: 3 alertas altas en `deepmerge-ts` dentro del CLI de Prisma (solo desarrollo, no llega a producción). Revisar al subir de versión.
 - **La base de Neon tiene datos de prueba** (seed). Antes de usarla con mamá hay que vaciarlos, o usar una rama de Neon aparte para desarrollo.
-- WhatsApp para apartar: **8326-0382** (dado por el usuario). SINPE: se asumió el mismo número, **confirmar**.
+- **WhatsApp: 8326-0482 · SINPE: 8326-0382** (dados por el usuario el 2026-11-06; interpretado así, pendiente de confirmar que no sea al revés).
 - Nombre: **Rifas Ivannia**. Regla: número del primer premio de la Lotería Nacional de Costa Rica.
 - Pendiente: crear rama `desarrollo` en Neon y poner su URL en `api/.env`; la rama principal queda para datos reales.
 - Vender tarda ~2 s (guardar + recargar desde Neon en EE. UU.). Optimizar si molesta.
