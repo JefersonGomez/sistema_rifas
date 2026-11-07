@@ -12,7 +12,7 @@ import { aFechaInput, formatoTelefono, nombreLugar } from '../../utils/formato.j
 import { reducirFoto } from '../../utils/reducirFoto.js';
 
 const WHATSAPP_MAMA = '83260482';
-const SINPE_MAMA = '83260382';
+const SINPE_MAMA = '83260482';
 const REGLA = 'Juega con los premios de la Lotería Nacional de Costa Rica.';
 const PREMIO_VACIO = { descripcion: '', costo: '' };
 

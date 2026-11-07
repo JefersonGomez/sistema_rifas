@@ -76,7 +76,7 @@ Siguiente: correr `despliegue/README.md` en el VPS y probar con mamá; luego Eta
 - `bcryptjs` (JS puro) en vez de `bcrypt` para evitar compilar módulos nativos en Windows.
 - Panel sin pantallas Clientes ni Métricas todavía (etapa 5). Finalizar rifa se adelantó a la etapa 3 para cerrar el ciclo completo.
 - Fecha del sorteo se guarda al mediodía de Costa Rica para que no cambie de día por zona horaria.
-- Rifa nueva copia WhatsApp, SINPE, regla y estilo de la rifa anterior. Por defecto WhatsApp y SINPE = 8326-0382.
+- Rifa nueva copia WhatsApp, SINPE, regla y estilo de la rifa anterior. Por defecto WhatsApp y SINPE = 8326-0482.
 - Abono con `SELECT … FOR UPDATE` para que dos pagos simultáneos no superen el precio.
 - **Despliegue sin Docker**: systemd en vez de PM2 (viene con Ubuntu, sin dependencias). La app escucha en 127.0.0.1 (`HOST`) y confía en un proxy (`TRUST_PROXY=1`).
 - PWA con `start_url: /admin` (la instala mamá). El login tiene enlace a la página pública por si un cliente la instala.
@@ -87,7 +87,7 @@ Siguiente: correr `despliegue/README.md` en el VPS y probar con mamá; luego Eta
 ## Pendientes / notas
 - `npm audit`: 3 alertas altas en `deepmerge-ts` dentro del CLI de Prisma (solo desarrollo, no llega a producción). Revisar al subir de versión.
 - **La base de Neon tiene datos de prueba** (seed). Antes de usarla con mamá hay que vaciarlos, o usar una rama de Neon aparte para desarrollo.
-- **WhatsApp: 8326-0482 · SINPE: 8326-0382** (dados por el usuario el 2026-11-06; interpretado así, pendiente de confirmar que no sea al revés).
+- **WhatsApp y SINPE: 8326-0482** (confirmado por el usuario el 2026-11-06; el 8326-0382 era un error).
 - Nombre: **Rifas Ivannia**. Regla: número del primer premio de la Lotería Nacional de Costa Rica.
 - Pendiente: crear rama `desarrollo` en Neon y poner su URL en `api/.env`; la rama principal queda para datos reales.
 - Vender tarda ~2 s (guardar + recargar desde Neon en EE. UU.). Optimizar si molesta.

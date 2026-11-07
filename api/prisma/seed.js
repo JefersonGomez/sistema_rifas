@@ -87,7 +87,7 @@ async function main() {
       fechaSorteo: new Date('2026-10-18T19:00:00-06:00'),
       reglaGanador: 'Juega con los premios de la Lotería Nacional de Costa Rica.',
       estado: 'finalizada',
-      sinpeNumero: '83260382',
+      sinpeNumero: '83260482',
       whatsapp: '83260482',
       creadaEn: new Date('2026-09-20T10:00:00-06:00'),
       finalizadaEn: new Date('2026-10-18T21:00:00-06:00'),
@@ -116,7 +116,7 @@ async function main() {
           { lugar: 3, descripcion: '₡5 000 en efectivo', costo: 5000 },
         ],
       },
-      sinpeNumero: '83260382',
+      sinpeNumero: '83260482',
       whatsapp: '83260482',
     },
   });
