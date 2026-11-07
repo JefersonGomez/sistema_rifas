@@ -78,7 +78,10 @@ UPLOAD_DIR=uploads
 NODE_ENV=production
 HOST=127.0.0.1
 TRUST_PROXY=1
+APP_URL=https://rifasivannia.duckdns.org
 ```
+
+`APP_URL` es la dirección pública: con ella WhatsApp arma la miniatura (foto, título y precio) al compartir el enlace.
 
 Para el `SESSION_SECRET` genere uno **nuevo** (no use el de la compu):
 

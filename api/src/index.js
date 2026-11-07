@@ -1,3 +1,4 @@
+import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import express from 'express';
@@ -10,6 +11,7 @@ import { rifasRouter } from './routes/rifas.js';
 import { boletosRouter } from './routes/boletos.js';
 import { clientesRouter } from './routes/clientes.js';
 import { requiereSesion } from './middleware/auth.js';
+import { datosVistaPrevia, etiquetasMeta } from './vistaPrevia.js';
 import { manejarErrores, rutaNoEncontrada } from './middleware/errores.js';
 
 const app = express();
@@ -60,9 +62,25 @@ if (config.esProduccion) {
       },
     }),
   );
-  app.get(/.*/, (_req, res) => {
+  // En la página de clientes ("/") se escriben la foto, el título y la descripción de la rifa
+  // para que WhatsApp muestre la miniatura al compartir el enlace.
+  const plantilla = fs.readFileSync(path.join(dist, 'index.html'), 'utf8');
+  app.get(/.*/, async (req, res) => {
+    let html = plantilla;
+    if (req.path === '/') {
+      try {
+        const base = config.appUrl || `${req.protocol}://${req.get('host')}`;
+        const meta = etiquetasMeta(await datosVistaPrevia({ usarCache: true }), base);
+        html = plantilla
+          .replace(/<title>[^<]*<\/title>/, '')
+          .replace(/<meta name="description"[^>]*>/, '')
+          .replace('<!-- vista-previa -->', meta);
+      } catch (e) {
+        console.error('No se pudo armar la vista previa:', e.message);
+      }
+    }
     res.setHeader('Cache-Control', 'no-cache');
-    res.sendFile(path.join(dist, 'index.html'));
+    res.type('html').send(html);
   });
 }
 

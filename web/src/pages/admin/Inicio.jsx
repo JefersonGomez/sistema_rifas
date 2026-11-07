@@ -3,6 +3,7 @@ import { ExternalLink, Plus, Ticket, Wallet } from 'lucide-react';
 import { useRifas, useTalonario } from '../../hooks/useRifas.js';
 import BotonWhatsApp from '../../components/BotonWhatsApp.jsx';
 import Medalla from '../../components/Medalla.jsx';
+import CompartirPagina from '../../components/CompartirPagina.jsx';
 import { diasHasta, formatoColones, formatoFecha } from '../../utils/formato.js';
 import { mensajeCompartirLibres } from '../../utils/mensajesWhatsApp.js';
 
@@ -90,6 +91,8 @@ export default function Inicio() {
           <ExternalLink aria-hidden className="h-5 w-5" /> Ver la página de los clientes
         </a>
       </section>
+
+      <CompartirPagina />
     </div>
   );
 }

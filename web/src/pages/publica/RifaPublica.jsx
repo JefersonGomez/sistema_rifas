@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { CalendarDays, Gift, Ticket, Trophy, Wallet, X } from 'lucide-react';
+import { CalendarDays, Gift, Share2, Ticket, Trophy, Wallet, X } from 'lucide-react';
 import { pedir } from '../../api/cliente.js';
 import Cuadricula from '../../components/Cuadricula.jsx';
 import BotonWhatsApp from '../../components/BotonWhatsApp.jsx';
@@ -9,7 +9,8 @@ import BarraAvance from '../../components/BarraAvance.jsx';
 import { temaDe } from '../../utils/temas.js';
 import Medalla from '../../components/Medalla.jsx';
 import { formatoColones, formatoFecha, formatoTelefono, nombreLugar, unirLista } from '../../utils/formato.js';
-import { mensajeApartar } from '../../utils/mensajesWhatsApp.js';
+import { enlaceWhatsApp, mensajeApartar } from '../../utils/mensajesWhatsApp.js';
+import { mensajeCompartirPagina } from '../../components/CompartirPagina.jsx';
 
 export default function RifaPublica() {
   const rifaQ = useQuery({ queryKey: ['public', 'rifa'], queryFn: () => pedir('/public/rifa') });
@@ -23,8 +24,19 @@ export default function RifaPublica() {
   return (
     // Fondo oscuro; las tarjetas blancas llevan la clase "clara" (ver index.css).
     <div className="publica-oscura min-h-dvh bg-pino text-tinta">
-      <header className="mx-auto flex max-w-xl justify-center px-4 pt-5 md:max-w-6xl md:justify-start lg:px-8">
-        <Marca />
+      <header className="mx-auto flex max-w-xl items-center justify-between gap-3 px-4 pt-4 md:max-w-6xl lg:px-8">
+        <Marca texto="whitespace-nowrap text-xl sm:text-2xl" />
+        {/* Para que los clientes pasen la página a sus contactos (WhatsApp arma la miniatura). */}
+        <a
+          href={enlaceWhatsApp(null, mensajeCompartirPagina(rifa?.titulo))}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="btn shrink-0 gap-1.5 rounded-full bg-whatsapp px-4 text-base text-[#1C2B2A] shadow-md hover:brightness-95 max-[359px]:px-3"
+          aria-label="Compartir esta página por WhatsApp"
+        >
+          <Share2 aria-hidden className="h-5 w-5" />
+          <span className="max-[359px]:hidden">Compartir</span>
+        </a>
       </header>
       {rifaQ.isPending ? (
         <Cargando />

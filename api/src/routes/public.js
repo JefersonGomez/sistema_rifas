@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import rateLimit from 'express-rate-limit';
 import { prisma } from '../db.js';
+import { datosVistaPrevia } from '../vistaPrevia.js';
 
 // Rutas públicas: NUNCA devuelven nombres ni teléfonos de los compradores.
 export const publicRouter = Router();
@@ -87,4 +88,9 @@ publicRouter.get('/rifa/ganador', async (_req, res) => {
       premios: premios.map((p) => ({ ...p, hayGanador: conDueno.has(p.numeroGanador) })),
     },
   });
+});
+
+// Miniatura para compartir (la usa el panel para mostrar cómo se verá en WhatsApp).
+publicRouter.get('/vista-previa', async (_req, res) => {
+  res.json(await datosVistaPrevia());
 });

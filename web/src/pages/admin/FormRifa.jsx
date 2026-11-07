@@ -9,6 +9,7 @@ import { useAvisos } from '../../components/Avisos.jsx';
 import Cuadricula from '../../components/Cuadricula.jsx';
 import { COLORES, FUENTES } from '../../utils/temas.js';
 import { aFechaInput, formatoTelefono, nombreLugar } from '../../utils/formato.js';
+import { reducirFoto } from '../../utils/reducirFoto.js';
 
 const WHATSAPP_MAMA = '83260482';
 const SINPE_MAMA = '83260382';
@@ -91,7 +92,7 @@ function Formulario({ id, inicial, fotoActual, vendidos }) {
       const { rifa } = await pedir(id ? `/admin/rifas/${id}` : '/admin/rifas', { metodo: id ? 'PATCH' : 'POST', datos });
       if (foto) {
         const formulario = new FormData();
-        formulario.append('foto', foto);
+        formulario.append('foto', await reducirFoto(foto));
         await pedir(`/admin/rifas/${rifa.id}/foto`, { metodo: 'POST', formulario });
       }
       return rifa;

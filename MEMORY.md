@@ -15,6 +15,7 @@ Siguiente: correr `despliegue/README.md` en el VPS y probar con mamá; luego Eta
 - El usuario ya usa el panel: creó la rifa "Licuadora Ninja" (#15). En una prueba se le reemplazó la foto por error; se dejó sin foto (ver memoria de Claude).
 - **Modo claro/oscuro** en el panel con interruptor animado (sol/luna); se recuerda en el teléfono y la primera vez sigue al sistema. La página de clientes no cambia.
 - **Historial de cada rifa** (`/admin/rifas/:id`, botón "Ver historial"): premios y ganadores, recaudado, por cobrar, ganancia, efectivo vs SINPE, compradores, deudores (con recordar) y todos los pagos. Descarga CSV para Excel (`/api/admin/rifas/:id/exportar`, separador `;` con BOM).
+- **Compartir con miniatura**: botón "Compartir" en la página de clientes y tarjeta con vista previa estilo WhatsApp en Inicio del panel. El servidor escribe etiquetas Open Graph (solo en producción, con `APP_URL`). Fotos se achican a JPG ≤ 1200 px al subirlas (WebP → JPG). La foto actual de "Licuadora Ninja" es WebP: conviene volver a subirla.
 - Usuario temporal de desarrollo `prueba` / `clave-de-prueba-123` en la base de prueba: **borrarlo antes de usar datos reales**.
 
 ## Etapas

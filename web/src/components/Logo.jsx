@@ -32,11 +32,11 @@ export default function Logo({ className = 'h-12 w-12', animado = true }) {
   );
 }
 
-export function Marca({ className = '' }) {
+export function Marca({ className = '', texto = 'text-2xl' }) {
   return (
     <span className={`flex items-center gap-2 ${className}`}>
       <Logo className="h-11 w-11 shrink-0" />
-      <span className="font-titulo text-2xl font-extrabold leading-none text-tinta">
+      <span className={`font-titulo font-extrabold leading-none text-tinta ${texto}`}>
         Rifas <span className="text-jade">Ivannia</span>
       </span>
     </span>

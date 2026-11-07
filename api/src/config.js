@@ -12,5 +12,7 @@ export const config = {
   // Detrás de Caddy: 1 = confiar en un proxy, para que el límite de intentos vea la IP real.
   trustProxy: Number(process.env.TRUST_PROXY) || 0,
   sessionSecret: process.env.SESSION_SECRET,
-  uploadDir: path.resolve(process.env.UPLOAD_DIR || 'uploads'),
+  // Dirección pública de la página (para la miniatura de WhatsApp). Ej.: https://rifasivannia.duckdns.org
+  appUrl: process.env.APP_URL || '',
+  uploadDir:path.resolve(process.env.UPLOAD_DIR || 'uploads'),
 };
