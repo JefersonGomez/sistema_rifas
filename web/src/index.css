@@ -24,6 +24,16 @@
     --sobrejade: 15 21 20;
     color-scheme: dark;
   }
+  /* Página de clientes: fondo oscuro. El texto suelto sobre el fondo es claro;
+     dentro de las tarjetas blancas (.clara) vuelve a ser oscuro. */
+  .publica-oscura {
+    --tinta: 236 232 225;
+    --jade: 94 234 212;
+  }
+  .publica-oscura .clara {
+    --tinta: 28 43 42;
+    --jade: 15 118 110;
+  }
   html {
     font-size: 16px;
   }

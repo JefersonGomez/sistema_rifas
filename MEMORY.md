@@ -10,7 +10,8 @@ Siguiente: correr `despliegue/README.md` en el VPS y probar con mamá; luego Eta
 - Tabla `premios` (1 a 3 por rifa). Migración `20261106120000_premios` pasó el premio de cada rifa al 1.er lugar sin perder datos y quitó `rifas.premio`, `costo_premio`, `numero_ganador`.
 - Finalizar pide un número por premio; la rifa se cierra siempre. Premio sin dueño = "sin ganador"; el nuevo sorteo lo decide quien administra (decisión del usuario).
 - Visual: medallas oro/plata/bronce (`Medalla.jsx`), tómbola animada cuando no hay foto, precio destacado sobre la foto, barra de vendidos (`BarraAvance.jsx`) en la página pública, Inicio con tarjeta principal (días y avance) y lista de premios.
-- Página de clientes: fondo neutro `piedra` con bolitas que flotan (respeta reducir movimiento), foto del premio completa sin recortes, talonario en tarjeta blanca también en celular.
+- Página de clientes: fondo oscuro verde pino `#12312D` sin animación (el usuario pidió quitar las bolitas y el beige), foto del premio completa sin recortes, tarjetas blancas.
+- Revisión en celulares (320, 360, 390, 430 px) de la página de clientes y del panel: sin desbordes, textos ≥ 16 px y botones ≥ 44 px (medido con script).
 - El usuario ya usa el panel: creó la rifa "Licuadora Ninja" (#15). En una prueba se le reemplazó la foto por error; se dejó sin foto (ver memoria de Claude).
 - **Modo claro/oscuro** en el panel con interruptor animado (sol/luna); se recuerda en el teléfono y la primera vez sigue al sistema. La página de clientes no cambia.
 - **Historial de cada rifa** (`/admin/rifas/:id`, botón "Ver historial"): premios y ganadores, recaudado, por cobrar, ganancia, efectivo vs SINPE, compradores, deudores (con recordar) y todos los pagos. Descarga CSV para Excel (`/api/admin/rifas/:id/exportar`, separador `;` con BOM).

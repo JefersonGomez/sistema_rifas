@@ -56,7 +56,7 @@ Tablas: `admins`, `rifas`, `premios`, `clientes`, `boletos`, `pagos`, `recordato
 - No crear carpetas ni archivos innecesarios.
 
 ## Diseño
-Paleta (Tailwind): `jade` #0F766E (principal, pagados), `jade-claro` #CCFBF1, `mango` #F59E0B (apartados), `coral` #E11D48 (peligro), `arena` #FAFAF7 (fondo del panel), `piedra` #E4DCCE (fondo neutro de la página de clientes, con bolitas animadas tenues en `FondoAnimado.jsx`), `tinta` #1C2B2A (texto), `whatsapp` #25D366 (solo botones WhatsApp).
+Paleta (Tailwind): `jade` #0F766E (principal, pagados), `jade-claro` #CCFBF1, `mango` #F59E0B (apartados), `coral` #E11D48 (peligro), `arena` #FAFAF7 (fondo del panel), `pino` #12312D (fondo oscuro de la página de clientes: el texto suelto es claro vía `.publica-oscura`; las tarjetas blancas llevan la clase `.clara`), `tinta` #1C2B2A (texto), `whatsapp` #25D366 (solo botones WhatsApp).
 Fuentes: `font-titulo` = Fraunces, `font-sans` = Nunito; para la cuadrícula también `font-baloo` y `font-bebas`. Cifras tabulares.
 Foto del premio: se muestra completa (`object-contain`) en cuadro 4:3, con la misma foto difuminada de relleno.
 Logo: tómbola de bingo animada en SVG (`web/src/components/Logo.jsx`, respeta "reducir movimiento").

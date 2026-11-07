@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { CalendarDays, Gift, Ticket, Trophy, Wallet, X } from 'lucide-react';
 import { pedir } from '../../api/cliente.js';
@@ -6,7 +6,6 @@ import Cuadricula from '../../components/Cuadricula.jsx';
 import BotonWhatsApp from '../../components/BotonWhatsApp.jsx';
 import Logo, { Marca } from '../../components/Logo.jsx';
 import BarraAvance from '../../components/BarraAvance.jsx';
-import FondoAnimado from '../../components/FondoAnimado.jsx';
 import { temaDe } from '../../utils/temas.js';
 import Medalla from '../../components/Medalla.jsx';
 import { formatoColones, formatoFecha, formatoTelefono, nombreLugar, unirLista } from '../../utils/formato.js';
@@ -16,10 +15,14 @@ export default function RifaPublica() {
   const rifaQ = useQuery({ queryKey: ['public', 'rifa'], queryFn: () => pedir('/public/rifa') });
   const rifa = rifaQ.data?.rifa;
 
+  // Barra del navegador del celular del mismo color que el fondo.
+  useEffect(() => {
+    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', '#12312D');
+  }, []);
+
   return (
-    // isolate: el fondo animado queda detrás del contenido, pero sobre el color neutro.
-    <div className="relative isolate min-h-dvh bg-piedra">
-      <FondoAnimado />
+    // Fondo oscuro; las tarjetas blancas llevan la clase "clara" (ver index.css).
+    <div className="publica-oscura min-h-dvh bg-pino text-tinta">
       <header className="mx-auto flex max-w-xl justify-center px-4 pt-5 md:max-w-6xl md:justify-start lg:px-8">
         <Marca />
       </header>
@@ -76,7 +79,7 @@ function RifaActiva({ rifa }) {
         <Premio rifa={rifa} />
       </div>
 
-      <section className="mt-5 rounded-3xl bg-white px-3 py-5 shadow-sm md:mt-0 md:p-6" aria-label="Talonario">
+      <section className="clara mt-5 rounded-3xl bg-white px-3 py-5 text-tinta shadow-lg md:mt-0 md:p-6" aria-label="Talonario">
         {numerosQ.isError ? (
           <ErrorCarga mensaje={numerosQ.error.message} onReintentar={numerosQ.refetch} />
         ) : !numerosQ.data ? (
@@ -119,7 +122,7 @@ function RifaActiva({ rifa }) {
 function Premio({ rifa }) {
   const [principal, ...otros] = rifa.premios;
   return (
-    <section className="overflow-hidden rounded-3xl bg-white shadow-sm">
+    <section className="clara overflow-hidden rounded-3xl bg-white text-tinta shadow-lg">
       <div className="relative">
         {rifa.fotoUrl ? (
           // La foto se ve completa (sin recortes) sea horizontal o vertical. El espacio que sobra
@@ -214,7 +217,7 @@ function Leyenda({ tema }) {
 function BarraApartar({ rifa, numeros, onLimpiar }) {
   const total = numeros.length * rifa.precioNumero;
   return (
-    <div className="fixed inset-x-0 bottom-0 z-10 animate-subir border-t border-black/5 bg-white/95 shadow-[0_-4px_20px_rgba(0,0,0,0.08)] backdrop-blur md:sticky md:bottom-4 md:mt-5 md:rounded-2xl md:border md:shadow-xl">
+    <div className="clara fixed inset-x-0 bottom-0 z-10 animate-subir border-t border-black/5 bg-white/95 text-tinta shadow-[0_-4px_20px_rgba(0,0,0,0.08)] backdrop-blur md:sticky md:bottom-4 md:mt-5 md:rounded-2xl md:border md:shadow-xl">
       <div className="mx-auto max-w-xl px-4 pb-[max(1rem,env(safe-area-inset-bottom))] pt-3 md:pb-4">
         <div className="mb-3 flex items-start justify-between gap-3">
           <p className="text-lg">
@@ -245,7 +248,7 @@ function SinRifaActiva() {
   return (
     <main className="mx-auto max-w-xl px-4 py-8 text-center">
       {resultado && (
-        <section className="mb-10 rounded-3xl bg-white p-6 shadow-sm">
+        <section className="clara mb-5 rounded-3xl bg-white p-6 text-tinta shadow-lg">
           <Trophy aria-hidden className="mx-auto h-12 w-12 text-mango" />
           <p className="mt-2 text-lg">{resultado.titulo}</p>
           <h1 className="mt-1 font-titulo text-3xl font-extrabold">
@@ -273,9 +276,11 @@ function SinRifaActiva() {
           </ul>
         </section>
       )}
-      <Gift aria-hidden className="mx-auto h-14 w-14 text-jade" strokeWidth={1.5} />
-      <p className="mt-3 font-titulo text-3xl font-extrabold">Pronto una nueva rifa</p>
-      <p className="mt-2 text-lg">Vuelva a visitar esta página en unos días.</p>
+      <section className="clara rounded-3xl bg-white p-6 text-tinta shadow-lg">
+        <Gift aria-hidden className="mx-auto h-14 w-14 text-jade" strokeWidth={1.5} />
+        <p className="mt-3 font-titulo text-3xl font-extrabold">Pronto una nueva rifa</p>
+        <p className="mt-2 text-lg">Vuelva a visitar esta página en unos días.</p>
+      </section>
     </main>
   );
 }
