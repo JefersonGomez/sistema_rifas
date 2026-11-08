@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Navigate, NavLink, Outlet, useNavigate } from 'react-router';
-import { House, LogOut, Ticket, Trophy, Wallet } from 'lucide-react';
+import { House, LogOut, Ticket, Trophy, Users, Wallet } from 'lucide-react';
 import { pedir } from '../../api/cliente.js';
 import { Marca } from '../../components/Logo.jsx';
 import BotonModo from '../../components/BotonModo.jsx';
@@ -10,6 +10,7 @@ const secciones = [
   { a: '/admin', texto: 'Inicio', icono: House, exacto: true },
   { a: '/admin/talonario', texto: 'Talonario', icono: Ticket },
   { a: '/admin/por-cobrar', texto: 'Por cobrar', icono: Wallet },
+  { a: '/admin/clientes', texto: 'Clientes', icono: Users },
   { a: '/admin/rifas', texto: 'Rifas', icono: Trophy },
 ];
 
@@ -72,19 +73,19 @@ export default function Panel() {
         </main>
       </div>
 
-      <nav className="fixed inset-x-0 bottom-0 z-30 grid grid-cols-4 border-t border-tinta/5 bg-superficie transition-colors duration-500 pb-[env(safe-area-inset-bottom)] md:hidden">
+      <nav className="fixed inset-x-0 bottom-0 z-30 grid grid-cols-5 border-t border-tinta/5 bg-superficie transition-colors duration-500 pb-[env(safe-area-inset-bottom)] md:hidden">
         {secciones.map((s) => (
           <NavLink
             key={s.a}
             to={s.a}
             end={s.exacto}
             className={({ isActive }) =>
-              `flex min-h-16 flex-col items-center justify-center gap-0.5 text-base font-bold ${isActive ? 'text-jade' : 'text-tinta/60'}`
+              `flex min-h-16 min-w-0 flex-col items-center justify-center gap-0.5 px-0.5 text-center text-[15px] font-bold leading-tight tracking-tight min-[400px]:text-base ${isActive ? 'text-jade' : 'text-tinta/60'}`
             }
           >
             {({ isActive }) => (
               <>
-                <span className={`rounded-full px-4 py-1 ${isActive ? 'bg-jade-claro' : ''}`}>
+                <span className={`rounded-full px-3 py-1 ${isActive ? 'bg-jade-claro' : ''}`}>
                   <s.icono aria-hidden className="h-6 w-6" />
                 </span>
                 {s.texto}

@@ -174,7 +174,9 @@ function ListaCompradores({ lista, rifa, conRecordar, vacio }) {
         <li key={c.cliente.id} className="tarjeta">
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0">
-              <p className="text-lg font-extrabold">{c.cliente.nombre}</p>
+              <Link to={`/admin/clientes/${c.cliente.id}`} className="text-lg font-extrabold underline-offset-4 hover:underline">
+                {c.cliente.nombre}
+              </Link>
               <p className="tabular-nums text-tinta/60">{formatoTelefono(c.cliente.telefono)}</p>
             </div>
             <div className="shrink-0 text-right">

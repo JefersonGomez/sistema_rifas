@@ -74,7 +74,9 @@ function FilaPendiente({ pendiente, rifa }) {
     <li className="tarjeta">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <p className="text-xl font-extrabold">{cliente.nombre}</p>
+          <Link to={`/admin/clientes/${cliente.id}`} className="block text-xl font-extrabold underline-offset-4 hover:underline">
+            {cliente.nombre}
+          </Link>
           <p className="tabular-nums text-tinta/70">{formatoTelefono(cliente.telefono)}</p>
         </div>
         <p className="shrink-0 font-titulo text-2xl font-extrabold text-amber-700 dark:text-amber-400">{formatoColones(debe)}</p>

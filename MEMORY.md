@@ -57,7 +57,10 @@ Siguiente: correr `despliegue/README.md` en el VPS y probar con mamá; luego Eta
 - [ ] Probar con mamá en su teléfono con datos móviles y ajustar
 
 ### 5. Historial y métricas
-- [ ] Finalizar rifa, historial, ficha de cliente, métricas, exportar CSV
+- [x] Finalizar rifa con ganadores, historial de cada rifa y exportar CSV (2026-11-06)
+- [x] Clientes (2026-11-08): lista con buscador (sin tildes) y orden (más compran / deben / A–Z); ficha con totales, efectivo vs SINPE, premios ganados, rifas con números y deudas, recordar y corregir datos/notas. Solo en el panel: los clientes no se registran, se crean al vender.
+- [ ] Métricas con gráficos (Recharts, aprobado por el usuario)
+- [ ] Ajustes: editar mensajes de WhatsApp (opcional)
 
 ## Decisiones tomadas
 - **Sin Docker** (pedido del usuario). La etapa 4 del plan se replantea sin Dockerfile/Compose.
@@ -74,7 +77,9 @@ Siguiente: correr `despliegue/README.md` en el VPS y probar con mamá; luego Eta
 - `/rifa/ganador` muestra la última rifa finalizada solo cuando no hay rifa activa; `hayGanador` es un sí/no, sin datos del comprador.
 - Sesión con token HMAC propio (sin jsonwebtoken ni express-session): menos dependencias y no necesita guardar sesiones.
 - `bcryptjs` (JS puro) en vez de `bcrypt` para evitar compilar módulos nativos en Windows.
-- Panel sin pantallas Clientes ni Métricas todavía (etapa 5). Finalizar rifa se adelantó a la etapa 3 para cerrar el ciclo completo.
+- Panel con 5 pestañas en el celular (Inicio, Talonario, Por cobrar, Clientes, Rifas); en < 400 px las etiquetas bajan a 15 px para caber. Métricas no tendrá pestaña propia en el celular (pendiente de decidir dónde va).
+- Las rifas canceladas no cuentan en lo gastado ni lo debido de un cliente.
+- Panel: pantalla Métricas todavía pendiente (etapa 5). Finalizar rifa se adelantó a la etapa 3 para cerrar el ciclo completo.
 - Fecha del sorteo se guarda al mediodía de Costa Rica para que no cambie de día por zona horaria.
 - Rifa nueva copia WhatsApp, SINPE, regla y estilo de la rifa anterior. Por defecto WhatsApp y SINPE = 8326-0482.
 - Abono con `SELECT … FOR UPDATE` para que dos pagos simultáneos no superen el precio.

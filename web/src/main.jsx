@@ -12,6 +12,8 @@ import PorCobrar from './pages/admin/PorCobrar.jsx';
 import Rifas from './pages/admin/Rifas.jsx';
 import FormRifa from './pages/admin/FormRifa.jsx';
 import RifaHistorial from './pages/admin/RifaHistorial.jsx';
+import Clientes from './pages/admin/Clientes.jsx';
+import ClienteFicha from './pages/admin/ClienteFicha.jsx';
 import './index.css';
 
 const router = createBrowserRouter([
@@ -24,6 +26,8 @@ const router = createBrowserRouter([
       { index: true, element: <Inicio /> },
       { path: 'talonario', element: <Talonario /> },
       { path: 'por-cobrar', element: <PorCobrar /> },
+      { path: 'clientes', element: <Clientes /> },
+      { path: 'clientes/:id', element: <ClienteFicha /> },
       { path: 'rifas', element: <Rifas /> },
       { path: 'rifas/nueva', element: <FormRifa /> },
       { path: 'rifas/:id', element: <RifaHistorial /> },

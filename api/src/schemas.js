@@ -131,4 +131,4 @@ export const recordatorioSchema = z.object({
 });
 
 // Para parámetros de ruta como :id
-export const idParam = z.coerce.number().int().positive('El identificador no es válido.');
+export const idParam = z.coerce.number({ error: 'El identificador no es válido.' }).int().positive('El identificador no es válido.');

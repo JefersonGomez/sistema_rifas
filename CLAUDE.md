@@ -44,6 +44,7 @@ Tablas: `admins`, `rifas`, `premios`, `clientes`, `boletos`, `pagos`, `recordato
 - Al finalizar: se guarda un `numero_ganador` por premio y la rifa se cierra siempre. Si nadie tiene un número, ese premio queda "sin ganador"; un nuevo sorteo lo decide quien administra (fuera del sistema).
 - La página pública muestra si cada premio tuvo ganador, nunca quién.
 - Miniatura al compartir: en producción el servidor escribe etiquetas Open Graph en `/` (`api/src/vistaPrevia.js`, reemplaza `<!-- vista-previa -->` de `web/index.html`). Usa la foto de la rifa o `web/public/og-imagen.png`. Requiere `APP_URL`. Las fotos se achican a 1200 px JPG en el navegador antes de subirlas (`web/src/utils/reducirFoto.js`).
+- Clientes: no se registran; mamá los crea al vender. Pantalla `/admin/clientes` (lista) y `/admin/clientes/:id` (ficha). Las rifas canceladas no cuentan en sus totales.
 - Métricas se calculan con consultas, sin tablas extra.
 
 ## Reglas de código
