@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Respaldo diario de la base de datos (pg_dump) y de las fotos. Guarda los últimos 14 días.
-# Cron (como usuario rifas, todos los días a las 3:00 a. m.):
-#   0 3 * * * /opt/rifas/despliegue/respaldo.sh >> /var/backups/rifas/respaldo.log 2>&1
+# Cron (como usuario rifas, 3:00 a. m. de Costa Rica = 9:00 UTC):
+#   0 9 * * * /opt/rifas/despliegue/respaldo.sh >> /var/backups/rifas/respaldo.log 2>&1
 set -euo pipefail
 
 APP="$(cd "$(dirname "$0")/.." && pwd)"

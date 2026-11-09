@@ -124,10 +124,10 @@ sudo -u rifas /opt/rifas/despliegue/respaldo.sh        # prueba manual
 sudo -u rifas crontab -e
 ```
 
-Agregue esta línea (todos los días a las 3:00 a. m.):
+Agregue esta línea (todos los días a las 3:00 a. m. de Costa Rica; el VPS usa hora UTC, por eso dice 9):
 
 ```
-0 3 * * * /opt/rifas/despliegue/respaldo.sh >> /var/backups/rifas/respaldo.log 2>&1
+0 9 * * * /opt/rifas/despliegue/respaldo.sh >> /var/backups/rifas/respaldo.log 2>&1
 ```
 
 Quedan los últimos 14 días de la base (`base-AAAA-MM-DD.sql.gz`) y de las fotos (`fotos-…tar.gz`).
