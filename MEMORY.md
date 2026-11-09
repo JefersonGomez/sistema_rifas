@@ -4,7 +4,8 @@ Bitácora de avance. Actualizar al cerrar cada tarea o etapa.
 
 ## Estado actual
 **Todas las etapas de código terminadas. Publicada el 2026-11-09 en https://rifasivannia.duckdns.org** (VPS Contabo, Nginx + certbot, app en :3100, respaldo diario por cron del usuario `rifas`).
-Siguiente: vaciar datos de prueba de la principal, borrar usuario `prueba`, volver a subir la foto de la licuadora en producción y probar con mamá con datos móviles.
+- 2026-11-09: base **production vaciada como nueva** (TRUNCATE de todas las tablas, fotos del VPS borradas). Único usuario del panel: `jeferson`. El usuario `prueba` solo existe en la rama desarrollo.
+Siguiente: probar con mamá en su teléfono con datos móviles (instalar como app, primera rifa real, compartir por WhatsApp) y ajustar lo que le cueste.
 - El VPS usa hora UTC: el cron del respaldo va a las 9:00 UTC = 3:00 a. m. en Costa Rica.
 - Las fotos viven en `/opt/rifas/api/uploads` del VPS (las de la compu no se suben solas).
 
@@ -18,7 +19,7 @@ Siguiente: vaciar datos de prueba de la principal, borrar usuario `prueba`, volv
 - **Modo claro/oscuro** en el panel con interruptor animado (sol/luna); se recuerda en el teléfono y la primera vez sigue al sistema. La página de clientes no cambia.
 - **Historial de cada rifa** (`/admin/rifas/:id`, botón "Ver historial"): premios y ganadores, recaudado, por cobrar, ganancia, efectivo vs SINPE, compradores, deudores (con recordar) y todos los pagos. Descarga CSV para Excel (`/api/admin/rifas/:id/exportar`, separador `;` con BOM).
 - **Compartir con miniatura**: botón "Compartir" en la página de clientes y tarjeta con vista previa estilo WhatsApp en Inicio del panel. El servidor escribe etiquetas Open Graph (solo en producción, con `APP_URL`). Fotos se achican a JPG ≤ 1200 px al subirlas (WebP → JPG). La foto actual de "Licuadora Ninja" es WebP: conviene volver a subirla.
-- Usuario temporal de desarrollo `prueba` / `clave-de-prueba-123` en la base de prueba: **borrarlo antes de usar datos reales**.
+- Usuario de desarrollo `prueba` / `clave-de-prueba-123`: solo en la rama `desarrollo` de Neon (la compu).
 
 ## Etapas
 ### 1. Base del proyecto ✅
@@ -54,7 +55,7 @@ Siguiente: vaciar datos de prueba de la principal, borrar usuario `prueba`, volv
 - [x] Producción probada en la compu: cookie Secure, caché de assets, rutas directas, 404 de fotos, instalable sin errores
 - [x] Guía paso a paso: `despliegue/README.md`
 - [x] Ejecutar la guía en el VPS y registrar DuckDNS (2026-11-09)
-- [ ] Vaciar datos de prueba de la rama principal de Neon antes de usarla de verdad
+- [x] Vaciar la rama production de Neon (2026-11-09)
 - [ ] Probar con mamá en su teléfono con datos móviles y ajustar
 
 ### 5. Historial y métricas
@@ -92,7 +93,6 @@ Siguiente: vaciar datos de prueba de la principal, borrar usuario `prueba`, volv
 
 ## Pendientes / notas
 - `npm audit`: 3 alertas altas en `deepmerge-ts` dentro del CLI de Prisma (solo desarrollo, no llega a producción). Revisar al subir de versión.
-- **La base de Neon tiene datos de prueba** (seed). Antes de usarla con mamá hay que vaciarlos, o usar una rama de Neon aparte para desarrollo.
 - **WhatsApp y SINPE: 8326-0482** (confirmado por el usuario el 2026-11-06; el 8326-0382 era un error).
 - Nombre: **Rifas Ivannia**. Regla: número del primer premio de la Lotería Nacional de Costa Rica.
 - Neon: la rama principal se llama **production** (la usa el VPS, datos reales). La compu usa la rama **desarrollo** (creada el 2026-11-08 con copia de los datos de prueba) en `api/.env`.
