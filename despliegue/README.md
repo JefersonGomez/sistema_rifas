@@ -168,7 +168,7 @@ La rama principal de Neon tiene **datos de prueba**. Cuando exista la rama `desa
 vacíe la principal desde el **SQL Editor** de Neon (rama principal) con:
 
 ```sql
-TRUNCATE pagos, recordatorios, boletos, clientes, rifas RESTART IDENTITY;
+TRUNCATE pagos, recordatorios, boletos, clientes, premios, rifas RESTART IDENTITY;
 ```
 
 Esto borra rifas, clientes y pagos, pero deja los usuarios del panel. No se puede deshacer.
