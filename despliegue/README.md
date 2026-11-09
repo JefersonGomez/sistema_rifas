@@ -10,7 +10,6 @@ Celular ──HTTPS──► Nginx (443) ──► Node 127.0.0.1:3100 (API + p�
 VPS de Contabo con **Ubuntu 24.04**, Node 22, Nginx, certbot y Docker ya instalados. Todo se hace por SSH.
 No se toca nada de los otros proyectos: solo se agrega un sitio nuevo a Nginx.
 Donde dice `rifasivannia`, use el subdominio que registre en DuckDNS.
-Donde dice `rifasivannia`, use el subdominio que registre en DuckDNS.
 
 ---
 
@@ -18,7 +17,7 @@ Donde dice `rifasivannia`, use el subdominio que registre en DuckDNS.
 
 1. Entre a <https://www.duckdns.org> con su cuenta de Google o GitHub.
 2. Escriba `rifasivannia` y toque **add domain**.
-3. En **current ip** ponga la IP pública del VPS y toque **update ip**.
+3. En **current ip** ponga la IP pública del VPS (`169.58.105.198`) y toque **update ip**.
 
 Si la IP del VPS es fija, no hay que hacer nada más.
 
