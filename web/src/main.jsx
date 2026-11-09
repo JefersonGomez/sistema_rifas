@@ -14,6 +14,7 @@ import FormRifa from './pages/admin/FormRifa.jsx';
 import RifaHistorial from './pages/admin/RifaHistorial.jsx';
 import Clientes from './pages/admin/Clientes.jsx';
 import ClienteFicha from './pages/admin/ClienteFicha.jsx';
+import Ajustes from './pages/admin/Ajustes.jsx';
 import './index.css';
 
 const router = createBrowserRouter([
@@ -29,6 +30,9 @@ const router = createBrowserRouter([
       { path: 'clientes', element: <Clientes /> },
       { path: 'clientes/:id', element: <ClienteFicha /> },
       { path: 'rifas', element: <Rifas /> },
+      // Métricas trae Recharts (pesado): se descarga solo al abrirla.
+      { path: 'metricas', lazy: () => import('./pages/admin/Metricas.jsx').then((m) => ({ Component: m.default })) },
+      { path: 'ajustes', element: <Ajustes /> },
       { path: 'rifas/nueva', element: <FormRifa /> },
       { path: 'rifas/:id', element: <RifaHistorial /> },
       { path: 'rifas/:id/editar', element: <FormRifa /> },

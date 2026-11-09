@@ -9,9 +9,11 @@ import Opciones from '../../components/Opciones.jsx';
 import { useAvisos } from '../../components/Avisos.jsx';
 import { formatoColones, formatoFechaCorta, formatoTelefono } from '../../utils/formato.js';
 import { mensajeRecordatorio } from '../../utils/mensajesWhatsApp.js';
+import { useAjustes } from '../../hooks/useRifas.js';
 
 // Detalle de un número vendido: comprador, pagos, saldo y acciones.
 export default function HojaBoleto({ rifa, item, onCerrar }) {
+  const ajustes = useAjustes();
   const { numero, boleto } = item;
   const queryClient = useQueryClient();
   const avisar = useAvisos();
@@ -155,7 +157,7 @@ export default function HojaBoleto({ rifa, item, onCerrar }) {
         {!pagado && (
           <BotonWhatsApp
             telefono={boleto.cliente.telefono}
-            mensaje={mensajeRecordatorio({ nombre: boleto.cliente.nombre, debe: boleto.saldo, numeros: [numero], rifa })}
+            mensaje={mensajeRecordatorio({ nombre: boleto.cliente.nombre, debe: boleto.saldo, numeros: [numero], rifa }, ajustes.mensajeRecordatorio)}
             onClick={() => recordar.mutate()}
           >
             Recordar por WhatsApp

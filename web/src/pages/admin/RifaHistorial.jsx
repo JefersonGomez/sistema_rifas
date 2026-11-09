@@ -9,6 +9,7 @@ import BarraAvance from '../../components/BarraAvance.jsx';
 import BotonWhatsApp from '../../components/BotonWhatsApp.jsx';
 import { formatoColones, formatoFecha, formatoFechaCorta, formatoTelefono, nombreLugar } from '../../utils/formato.js';
 import { mensajeRecordatorio } from '../../utils/mensajesWhatsApp.js';
+import { useAjustes } from '../../hooks/useRifas.js';
 
 const etiquetas = {
   borrador: ['Borrador', 'bg-tinta/10 text-tinta'],
@@ -167,6 +168,7 @@ function Metodo({ icono: Icono, nombre, monto, pct, punto }) {
 }
 
 function ListaCompradores({ lista, rifa, conRecordar, vacio }) {
+  const ajustes = useAjustes();
   if (!lista.length) return <p className="tarjeta text-center text-lg text-tinta/70">{vacio}</p>;
   return (
     <ul className="space-y-3">
@@ -214,7 +216,7 @@ function ListaCompradores({ lista, rifa, conRecordar, vacio }) {
                 debe: c.debe,
                 numeros: c.numeros.filter((n) => n.saldo > 0).map((n) => n.numero),
                 rifa,
-              })}
+              }, ajustes.mensajeRecordatorio)}
               className="mt-3 w-full"
             >
               Recordar por WhatsApp

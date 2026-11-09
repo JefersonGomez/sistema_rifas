@@ -132,3 +132,13 @@ model Recordatorio {
   @@index([clienteId, rifaId])
   @@map("recordatorios")
 }
+
+// Una sola fila (id = 1) con los mensajes de WhatsApp que mamá personalizó. Vacío = mensaje de fábrica.
+model Ajustes {
+  id                  Int     @id @default(1)
+  mensajeApartar      String? @map("mensaje_apartar")
+  mensajeRecordatorio String? @map("mensaje_recordatorio")
+  mensajeLibres       String? @map("mensaje_libres")
+
+  @@map("ajustes")
+}

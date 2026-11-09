@@ -16,3 +16,9 @@ export function useTalonario(rifaId) {
     enabled: Boolean(rifaId),
   });
 }
+
+// Mensajes de WhatsApp personalizados (null = mensaje de fábrica).
+export function useAjustes() {
+  const q = useQuery({ queryKey: ['admin', 'ajustes'], queryFn: () => pedir('/admin/ajustes'), staleTime: 5 * 60_000 });
+  return q.data?.ajustes ?? {};
+}

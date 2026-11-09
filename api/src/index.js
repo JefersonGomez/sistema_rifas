@@ -10,6 +10,8 @@ import { authRouter } from './routes/auth.js';
 import { rifasRouter } from './routes/rifas.js';
 import { boletosRouter } from './routes/boletos.js';
 import { clientesRouter } from './routes/clientes.js';
+import { metricasRouter } from './routes/metricas.js';
+import { ajustesRouter } from './routes/ajustes.js';
 import { requiereSesion } from './middleware/auth.js';
 import { datosVistaPrevia, etiquetasMeta } from './vistaPrevia.js';
 import { manejarErrores, rutaNoEncontrada } from './middleware/errores.js';
@@ -41,7 +43,7 @@ app.get('/api/health', async (_req, res) => {
 
 app.use('/api/public', publicRouter);
 app.use('/api/auth', authRouter);
-app.use('/api/admin', requiereSesion, rifasRouter, boletosRouter, clientesRouter);
+app.use('/api/admin', requiereSesion, rifasRouter, boletosRouter, clientesRouter, metricasRouter, ajustesRouter);
 app.use('/api', rutaNoEncontrada);
 
 // Fotos de los premios.

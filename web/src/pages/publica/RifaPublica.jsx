@@ -242,7 +242,7 @@ function BarraApartar({ rifa, numeros, onLimpiar }) {
           </button>
         </div>
         {rifa.whatsapp ? (
-          <BotonWhatsApp telefono={rifa.whatsapp} mensaje={mensajeApartar(numeros, rifa.titulo)}>
+          <BotonWhatsApp telefono={rifa.whatsapp} mensaje={mensajeApartar(numeros, rifa.titulo, rifa.mensajeApartar)}>
             Apartar por WhatsApp
           </BotonWhatsApp>
         ) : (

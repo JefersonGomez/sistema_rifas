@@ -7,7 +7,7 @@ App web **Rifas Ivannia** para que mamá maneje rifas de 00 a 99 desde el celula
 
 ## Stack
 - Monorepo con npm workspaces: `api/` y `web/`.
-- **web:** React 19 + Vite + Tailwind CSS 3 (`tailwind.config.js`), React Router 7, TanStack Query 5, Lucide React, vite-plugin-pwa (instalable; el service worker NO guarda `/api` ni `/uploads`). Luego: Recharts.
+- **web:** React 19 + Vite + Tailwind CSS 3 (`tailwind.config.js`), React Router 7, TanStack Query 5, Lucide React, Recharts 3 (solo en Métricas, cargada aparte), vite-plugin-pwa (instalable; el service worker NO guarda `/api` ni `/uploads`).
 - **api:** Node 22 + Express 5 (ESM), Prisma 6, Zod 4, helmet, express-rate-limit, bcryptjs, multer (fotos).
 - Sesión: token HMAC propio en cookie `sesion` httpOnly/sameSite=strict, 30 días (`api/src/middleware/auth.js`). Requiere `SESSION_SECRET`.
 - **Base de datos:** PostgreSQL en Neon. `DATABASE_URL` (pooler) para la app, `DIRECT_URL` (sin pooler) para migraciones.
@@ -26,7 +26,8 @@ App web **Rifas Ivannia** para que mamá maneje rifas de 00 a 99 desde el celula
 - En Windows, `prisma generate` falla (EPERM) si `npm run dev` está corriendo: detenerlo antes de migrar.
 
 ## Modelo de datos (`api/prisma/schema.prisma`)
-Tablas: `admins`, `rifas`, `premios`, `clientes`, `boletos`, `pagos`, `recordatorios` (columnas en snake_case vía `@map`).
+Tablas: `admins`, `rifas`, `premios`, `clientes`, `boletos`, `pagos`, `recordatorios`, `ajustes` (columnas en snake_case vía `@map`).
+- `ajustes`: una sola fila (id = 1) con los mensajes de WhatsApp personalizados; `null` = mensaje de fábrica (`PLANTILLAS` en `web/src/utils/mensajesWhatsApp.js`).
 - `premios`: 1 a 3 por rifa (`lugar` 1, 2, 3), con `descripcion`, `costo` (privado, para la ganancia) y `numero_ganador`. Único `(rifa_id, lugar)`.
 - `rifas.estado`: borrador | activa | finalizada | cancelada. **Solo una activa** (índice único parcial en la migración).
 - `rifas.color_celdas` / `fuente_numeros`: estilo de la cuadrícula pública. Las opciones deben coincidir en `api/src/schemas.js` y `web/src/utils/temas.js`.
@@ -45,7 +46,8 @@ Tablas: `admins`, `rifas`, `premios`, `clientes`, `boletos`, `pagos`, `recordato
 - La página pública muestra si cada premio tuvo ganador, nunca quién.
 - Miniatura al compartir: en producción el servidor escribe etiquetas Open Graph en `/` (`api/src/vistaPrevia.js`, reemplaza `<!-- vista-previa -->` de `web/index.html`). Usa la foto de la rifa o `web/public/og-imagen.png`. Requiere `APP_URL`. Las fotos se achican a 1200 px JPG en el navegador antes de subirlas (`web/src/utils/reducirFoto.js`).
 - Clientes: no se registran; mamá los crea al vender. Pantalla `/admin/clientes` (lista) y `/admin/clientes/:id` (ficha). Las rifas canceladas no cuentan en sus totales.
-- Métricas se calculan con consultas, sin tablas extra.
+- Métricas (`/api/admin/metricas?anio=`) se calculan al vuelo, sin tablas extra; cuentan solo rifas publicadas y finalizadas, en el año de su sorteo.
+- Mensajes de WhatsApp: plantillas con `{palabras}`; una línea cuyo dato falta (ej. sin fecha) se quita. El de apartar viaja en `/api/public/rifa` como `mensajeApartar`.
 
 ## Reglas de código
 - Textos de la interfaz en **español de Costa Rica**. Errores claros y que digan cómo arreglarlo (`ErrorApp` en la API).

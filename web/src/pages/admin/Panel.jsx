@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Navigate, NavLink, Outlet, useNavigate } from 'react-router';
-import { House, LogOut, Ticket, Trophy, Users, Wallet } from 'lucide-react';
+import { ChartColumn, House, LogOut, Settings, Ticket, Trophy, Users, Wallet } from 'lucide-react';
 import { pedir } from '../../api/cliente.js';
 import { Marca } from '../../components/Logo.jsx';
 import BotonModo from '../../components/BotonModo.jsx';
@@ -12,7 +12,11 @@ const secciones = [
   { a: '/admin/por-cobrar', texto: 'Por cobrar', icono: Wallet },
   { a: '/admin/clientes', texto: 'Clientes', icono: Users },
   { a: '/admin/rifas', texto: 'Rifas', icono: Trophy },
+  // En el celular no caben: Métricas se abre desde Inicio y Mis rifas; Ajustes, con el engranaje de arriba.
+  { a: '/admin/metricas', texto: 'Métricas', icono: ChartColumn, soloPc: true },
+  { a: '/admin/ajustes', texto: 'Ajustes', icono: Settings, soloPc: true },
 ];
+const seccionesCelular = secciones.filter((s) => !s.soloPc);
 
 // Marco del panel: barra lateral en computadora, barra inferior en el celular.
 export default function Panel() {
@@ -63,6 +67,9 @@ export default function Panel() {
           <Marca />
           <div className="flex items-center gap-1">
             <BotonModo oscuro={oscuro} onCambiar={cambiarModo} />
+            <NavLink to="/admin/ajustes" className={({ isActive }) => `btn px-2 ${isActive ? 'text-jade' : 'text-tinta/70'}`} aria-label="Ajustes">
+              <Settings aria-hidden className="h-6 w-6" />
+            </NavLink>
             <button type="button" className="btn px-2 text-tinta/70" onClick={() => salir.mutate()} aria-label="Salir">
               <LogOut aria-hidden className="h-6 w-6" />
             </button>
@@ -74,7 +81,7 @@ export default function Panel() {
       </div>
 
       <nav className="fixed inset-x-0 bottom-0 z-30 grid grid-cols-5 border-t border-tinta/5 bg-superficie transition-colors duration-500 pb-[env(safe-area-inset-bottom)] md:hidden">
-        {secciones.map((s) => (
+        {seccionesCelular.map((s) => (
           <NavLink
             key={s.a}
             to={s.a}

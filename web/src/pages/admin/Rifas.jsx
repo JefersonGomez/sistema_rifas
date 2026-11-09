@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { ChevronRight, Flag, History, Pencil, Plus, Send } from 'lucide-react';
+import { ChartColumn, ChevronRight, Flag, History, Pencil, Plus, Send } from 'lucide-react';
 import { pedir } from '../../api/cliente.js';
 import { useRifas } from '../../hooks/useRifas.js';
 import HojaInferior from '../../components/HojaInferior.jsx';
@@ -28,6 +28,9 @@ export default function Rifas() {
           <Plus aria-hidden className="h-6 w-6" /> Crear rifa
         </Link>
       </div>
+      <Link to="/admin/metricas" className="btn-secundario -mt-2 mb-5 w-full">
+        <ChartColumn aria-hidden className="h-5 w-5" /> Ver métricas del año
+      </Link>
 
       {isPending && <p className="py-10 text-center text-lg">Cargando…</p>}
       {!isPending && rifas.length === 0 && (

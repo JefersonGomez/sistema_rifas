@@ -2,7 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Link } from 'react-router';
 import { Bell, PartyPopper } from 'lucide-react';
 import { pedir } from '../../api/cliente.js';
-import { useRifas } from '../../hooks/useRifas.js';
+import { useRifas, useAjustes } from '../../hooks/useRifas.js';
 import BotonWhatsApp from '../../components/BotonWhatsApp.jsx';
 import { esHoy, formatoColones, formatoFecha, formatoTelefono } from '../../utils/formato.js';
 import { mensajeRecordatorio } from '../../utils/mensajesWhatsApp.js';
@@ -61,6 +61,7 @@ export default function PorCobrar() {
 }
 
 function FilaPendiente({ pendiente, rifa }) {
+  const ajustes = useAjustes();
   const queryClient = useQueryClient();
   const { cliente, numeros, debe, ultimoRecordatorio } = pendiente;
   const recordadoHoy = ultimoRecordatorio && esHoy(ultimoRecordatorio);
@@ -101,7 +102,7 @@ function FilaPendiente({ pendiente, rifa }) {
 
       <BotonWhatsApp
         telefono={cliente.telefono}
-        mensaje={mensajeRecordatorio({ nombre: cliente.nombre, debe, numeros: numeros.map((n) => n.numero), rifa })}
+        mensaje={mensajeRecordatorio({ nombre: cliente.nombre, debe, numeros: numeros.map((n) => n.numero), rifa }, ajustes.mensajeRecordatorio)}
         onClick={() => recordar.mutate()}
         className="mt-3 w-full"
       >

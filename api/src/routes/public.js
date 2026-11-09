@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import rateLimit from 'express-rate-limit';
 import { prisma } from '../db.js';
+import { leerAjustes } from './ajustes.js';
 import { datosVistaPrevia } from '../vistaPrevia.js';
 
 // Rutas públicas: NUNCA devuelven nombres ni teléfonos de los compradores.
@@ -37,8 +38,12 @@ const camposPublicos = {
 const buscarRifaActiva = () =>
   prisma.rifa.findFirst({ where: { estado: 'activa' }, select: camposPublicos });
 
+// Incluye el mensaje para apartar si mamá lo personalizó en Ajustes.
 publicRouter.get('/rifa', async (_req, res) => {
-  res.json({ rifa: await buscarRifaActiva() });
+  const rifa = await buscarRifaActiva();
+  if (!rifa) return res.json({ rifa: null });
+  const { mensajeApartar } = await leerAjustes();
+  res.json({ rifa: { ...rifa, mensajeApartar } });
 });
 
 publicRouter.get('/rifa/numeros', async (_req, res) => {

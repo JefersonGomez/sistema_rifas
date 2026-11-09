@@ -1,6 +1,6 @@
 import { Link } from 'react-router';
-import { ExternalLink, Plus, Ticket, Wallet } from 'lucide-react';
-import { useRifas, useTalonario } from '../../hooks/useRifas.js';
+import { ChartColumn, ExternalLink, Plus, Ticket, Wallet } from 'lucide-react';
+import { useRifas, useTalonario, useAjustes } from '../../hooks/useRifas.js';
 import BotonWhatsApp from '../../components/BotonWhatsApp.jsx';
 import Medalla from '../../components/Medalla.jsx';
 import CompartirPagina from '../../components/CompartirPagina.jsx';
@@ -8,6 +8,7 @@ import { diasHasta, formatoColones, formatoFecha } from '../../utils/formato.js'
 import { mensajeCompartirLibres } from '../../utils/mensajesWhatsApp.js';
 
 export default function Inicio() {
+  const ajustes = useAjustes();
   const { activa, isPending } = useRifas();
   const talonarioQ = useTalonario(activa?.id);
 
@@ -23,6 +24,9 @@ export default function Inicio() {
         </Link>
         <Link to="/admin/rifas" className="btn-secundario mt-3 w-full">
           Ver mis rifas
+        </Link>
+        <Link to="/admin/metricas" className="btn mt-3 w-full text-jade">
+          <ChartColumn aria-hidden className="h-5 w-5" /> Ver métricas
         </Link>
       </section>
     );
@@ -83,13 +87,18 @@ export default function Inicio() {
           <Link to="/admin/por-cobrar" className="btn-secundario">
             <Wallet aria-hidden className="h-6 w-6" /> Registrar pago
           </Link>
-          <BotonWhatsApp mensaje={mensajeCompartirLibres(activa, libres)} className="w-full">
+          <BotonWhatsApp mensaje={mensajeCompartirLibres(activa, libres, ajustes.mensajeLibres)} className="w-full">
             Compartir números libres
           </BotonWhatsApp>
         </div>
-        <a href="/" target="_blank" rel="noopener noreferrer" className="btn w-full text-jade">
-          <ExternalLink aria-hidden className="h-5 w-5" /> Ver la página de los clientes
-        </a>
+        <div className="grid grid-cols-1 gap-x-3 sm:grid-cols-2">
+          <a href="/" target="_blank" rel="noopener noreferrer" className="btn w-full text-jade">
+            <ExternalLink aria-hidden className="h-5 w-5" /> Ver la página de los clientes
+          </a>
+          <Link to="/admin/metricas" className="btn w-full text-jade">
+            <ChartColumn aria-hidden className="h-5 w-5" /> Ver métricas
+          </Link>
+        </div>
       </section>
 
       <CompartirPagina />

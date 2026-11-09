@@ -10,6 +10,7 @@ import Medalla from '../../components/Medalla.jsx';
 import { Inicial } from './Clientes.jsx';
 import { esHoy, formatoColones, formatoFecha, formatoFechaCorta, formatoTelefono, nombreLugar, primerNombre } from '../../utils/formato.js';
 import { mensajeRecordatorio } from '../../utils/mensajesWhatsApp.js';
+import { useAjustes } from '../../hooks/useRifas.js';
 
 const etiquetas = {
   borrador: ['Borrador', 'bg-tinta/10 text-tinta'],
@@ -100,6 +101,7 @@ function Dato({ titulo, valor, color = '' }) {
 }
 
 function Participacion({ p, cliente }) {
+  const ajustes = useAjustes();
   const queryClient = useQueryClient();
   const { rifa } = p;
   const [texto, clase] = etiquetas[rifa.estado] ?? etiquetas.borrador;
@@ -163,7 +165,7 @@ function Participacion({ p, cliente }) {
               debe: p.debe,
               numeros: p.numeros.filter((n) => n.saldo > 0).map((n) => n.numero),
               rifa,
-            })}
+            }, ajustes.mensajeRecordatorio)}
             onClick={() => recordar.mutate()}
             className="mt-3 w-full"
           >

@@ -132,3 +132,16 @@ export const recordatorioSchema = z.object({
 
 // Para parámetros de ruta como :id
 export const idParam = z.coerce.number({ error: 'El identificador no es válido.' }).int().positive('El identificador no es válido.');
+
+// Mensajes de WhatsApp de Ajustes. Vacío = volver al mensaje de fábrica.
+const plantilla = (nombre, obligatoria) =>
+  textoOpcional(600, `El mensaje ${nombre}`).refine(
+    (v) => !v || v.includes(`{${obligatoria}}`),
+    `El mensaje ${nombre} debe incluir {${obligatoria}} para que se sepa cuáles números son.`,
+  );
+
+export const ajustesSchema = z.object({
+  mensajeApartar: plantilla('para apartar', 'numeros'),
+  mensajeRecordatorio: plantilla('de recordatorio', 'numeros'),
+  mensajeLibres: plantilla('de números libres', 'libres'),
+});

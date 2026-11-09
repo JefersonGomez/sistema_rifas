@@ -66,3 +66,22 @@
     @apply rounded-2xl bg-superficie p-4 shadow-sm;
   }
 }
+
+/* Gráficos de Métricas (Recharts): textos y líneas toman los colores del modo claro u oscuro. */
+.grafico .recharts-cartesian-axis-tick-value {
+  fill: rgb(var(--tinta) / 0.7);
+  font-size: 16px;
+}
+.grafico .recharts-cartesian-grid line {
+  stroke: rgb(var(--tinta) / 0.08);
+}
+.grafico .recharts-label-list text {
+  fill: rgb(var(--tinta));
+  font-size: 16px;
+  font-weight: 700;
+}
+.grafico .recharts-surface:focus,
+.grafico .recharts-wrapper:focus,
+.grafico .recharts-sector:focus {
+  outline: none;
+}

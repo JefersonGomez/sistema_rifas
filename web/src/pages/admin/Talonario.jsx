@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router';
 import { Share2, X } from 'lucide-react';
-import { useRifas, useTalonario } from '../../hooks/useRifas.js';
+import { useRifas, useTalonario, useAjustes } from '../../hooks/useRifas.js';
 import Cuadricula from '../../components/Cuadricula.jsx';
 import BotonWhatsApp from '../../components/BotonWhatsApp.jsx';
 import { temaDe } from '../../utils/temas.js';
@@ -11,6 +11,7 @@ import HojaBoleto from './HojaBoleto.jsx';
 import HojaVender from './HojaVender.jsx';
 
 export default function Talonario() {
+  const ajustes = useAjustes();
   const { activa, isPending } = useRifas();
   const talonarioQ = useTalonario(activa?.id);
   const [seleccion, setSeleccion] = useState(() => new Set());
@@ -54,7 +55,7 @@ export default function Talonario() {
           <h1 className="font-titulo text-3xl font-extrabold">Talonario</h1>
           <p className="text-lg">{rifa.titulo}</p>
         </div>
-        <BotonWhatsApp mensaje={mensajeCompartirLibres(rifa, libres)} className="shrink-0 px-3 text-base">
+        <BotonWhatsApp mensaje={mensajeCompartirLibres(rifa, libres, ajustes.mensajeLibres)} className="shrink-0 px-3 text-base">
           <span className="sr-only">Compartir números libres</span>
           <Share2 aria-hidden className="-ml-1 h-5 w-5" />
           <span className="hidden sm:inline">Compartir libres</span>

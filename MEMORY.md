@@ -3,8 +3,8 @@
 Bitácora de avance. Actualizar al cerrar cada tarea o etapa.
 
 ## Estado actual
-**Etapa 4 — Despliegue: código y guía listos (2026-11-03). Falta ejecutarla en el VPS** (no hay acceso desde aquí).
-Siguiente: correr `despliegue/README.md` en el VPS y probar con mamá; luego Etapa 5 — Historial y métricas.
+**Etapas 1, 2, 3 y 5 terminadas (2026-11-08). Falta ejecutar la Etapa 4 (despliegue) en el VPS** (no hay acceso desde aquí).
+Siguiente: correr `despliegue/README.md` en el VPS con el usuario y probar con mamá.
 
 **2026-11-06 — Premios 1.º/2.º/3.º y mejoras visuales:**
 - Tabla `premios` (1 a 3 por rifa). Migración `20261106120000_premios` pasó el premio de cada rifa al 1.er lugar sin perder datos y quitó `rifas.premio`, `costo_premio`, `numero_ganador`.
@@ -59,8 +59,8 @@ Siguiente: correr `despliegue/README.md` en el VPS y probar con mamá; luego Eta
 ### 5. Historial y métricas
 - [x] Finalizar rifa con ganadores, historial de cada rifa y exportar CSV (2026-11-06)
 - [x] Clientes (2026-11-08): lista con buscador (sin tildes) y orden (más compran / deben / A–Z); ficha con totales, efectivo vs SINPE, premios ganados, rifas con números y deudas, recordar y corregir datos/notas. Solo en el panel: los clientes no se registran, se crean al vender.
-- [ ] Métricas con gráficos (Recharts, aprobado por el usuario)
-- [ ] Ajustes: editar mensajes de WhatsApp (opcional)
+- [x] Métricas (2026-11-08) con Recharts 3.10 (aprobado por el usuario): totales del año, ganancia por rifa, cobrado por mes, efectivo vs SINPE, tiempo de venta, clientes frecuentes y mapa de números más pedidos. Se carga aparte (lazy) para no hacer pesada la página pública.
+- [x] Ajustes (2026-11-08): mamá edita los 3 mensajes de WhatsApp con palabras entre llaves ({numeros}, {rifa}…), vista previa y "volver al original". Tabla `ajustes` (una fila), migración `20261108120000_ajustes`.
 
 ## Decisiones tomadas
 - **Sin Docker** (pedido del usuario). La etapa 4 del plan se replantea sin Dockerfile/Compose.
@@ -77,9 +77,9 @@ Siguiente: correr `despliegue/README.md` en el VPS y probar con mamá; luego Eta
 - `/rifa/ganador` muestra la última rifa finalizada solo cuando no hay rifa activa; `hayGanador` es un sí/no, sin datos del comprador.
 - Sesión con token HMAC propio (sin jsonwebtoken ni express-session): menos dependencias y no necesita guardar sesiones.
 - `bcryptjs` (JS puro) en vez de `bcrypt` para evitar compilar módulos nativos en Windows.
-- Panel con 5 pestañas en el celular (Inicio, Talonario, Por cobrar, Clientes, Rifas); en < 400 px las etiquetas bajan a 15 px para caber. Métricas no tendrá pestaña propia en el celular (pendiente de decidir dónde va).
+- Panel con 5 pestañas en el celular (Inicio, Talonario, Por cobrar, Clientes, Rifas); en < 400 px las etiquetas bajan a 15 px para caber. Métricas se abre desde Inicio y Mis rifas; Ajustes con el engranaje del encabezado (en computadora ambos están en el menú).
 - Las rifas canceladas no cuentan en lo gastado ni lo debido de un cliente.
-- Panel: pantalla Métricas todavía pendiente (etapa 5). Finalizar rifa se adelantó a la etapa 3 para cerrar el ciclo completo.
+- Finalizar rifa se adelantó a la etapa 3 para cerrar el ciclo completo.
 - Fecha del sorteo se guarda al mediodía de Costa Rica para que no cambie de día por zona horaria.
 - Rifa nueva copia WhatsApp, SINPE, regla y estilo de la rifa anterior. Por defecto WhatsApp y SINPE = 8326-0482.
 - Abono con `SELECT … FOR UPDATE` para que dos pagos simultáneos no superen el precio.
