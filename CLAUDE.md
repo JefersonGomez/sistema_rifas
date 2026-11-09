@@ -11,7 +11,7 @@ App web **Rifas Ivannia** para que mamá maneje rifas de 00 a 99 desde el celula
 - **api:** Node 22 + Express 5 (ESM), Prisma 6, Zod 4, helmet, express-rate-limit, bcryptjs, multer (fotos).
 - Sesión: token HMAC propio en cookie `sesion` httpOnly/sameSite=strict, 30 días (`api/src/middleware/auth.js`). Requiere `SESSION_SECRET`.
 - **Base de datos:** PostgreSQL en Neon. `DATABASE_URL` (pooler) para la app, `DIRECT_URL` (sin pooler) para migraciones.
-- **Sin Docker.** No crear Dockerfile ni docker-compose. En el VPS: Node + systemd + Caddy instalados directo; archivos y guía en `despliegue/`.
+- **Sin Docker.** No crear Dockerfile ni docker-compose. En el VPS (Contabo, compartido con otros proyectos): Node + systemd, publicado por el **Nginx existente** + certbot en el puerto 3100; archivos y guía en `despliegue/`.
 
 ## Comandos
 - `npm install` — instala todo (desde la raíz).

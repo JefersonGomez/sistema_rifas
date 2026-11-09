@@ -1,13 +1,15 @@
 # Despliegue en el VPS (sin Docker)
 
-La app corre directo con Node, la mantiene viva **systemd** y **Caddy** pone el HTTPS.
-La base de datos queda en Neon.
+La app corre directo con Node y la mantiene viva **systemd**. El **Nginx** que ya tiene el VPS
+(compartido con portafolio, stockly y techrag) la publica, y **certbot** pone el HTTPS. La base de datos queda en Neon.
 
 ```
-Celular ──HTTPS──► Caddy (443) ──► Node 127.0.0.1:3000 (API + página) ──► Neon
+Celular ──HTTPS──► Nginx (443) ──► Node 127.0.0.1:3100 (API + página) ──► Neon
 ```
 
-Probado para **Ubuntu 24.04**. Todo se hace por SSH en el VPS.
+VPS de Contabo con **Ubuntu 24.04**, Node 22, Nginx, certbot y Docker ya instalados. Todo se hace por SSH.
+No se toca nada de los otros proyectos: solo se agrega un sitio nuevo a Nginx.
+Donde dice `rifasivannia`, use el subdominio que registre en DuckDNS.
 Donde dice `rifasivannia`, use el subdominio que registre en DuckDNS.
 
 ---
@@ -22,23 +24,11 @@ Si la IP del VPS es fija, no hay que hacer nada más.
 
 ## 2. Preparar el VPS (una sola vez)
 
+Node 22, Nginx, certbot y el firewall (22, 80, 443) ya están. Solo falta **pg_dump 18** para los respaldos
+(Neon usa PostgreSQL 18; no instala ninguna base de datos, solo la herramienta):
+
 ```bash
-# Paquetes base y firewall: solo SSH, HTTP y HTTPS
-sudo apt update && sudo apt upgrade -y
-sudo apt install -y git curl ufw ca-certificates gnupg
-sudo ufw allow OpenSSH && sudo ufw allow 80 && sudo ufw allow 443 && sudo ufw --force enable
-
-# Node 22
-curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -
-sudo apt install -y nodejs
-
-# Caddy (HTTPS automático)
-sudo apt install -y debian-keyring debian-archive-keyring apt-transport-https
-curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/gpg.key' | sudo gpg --dearmor -o /usr/share/keyrings/caddy-stable-archive-keyring.gpg
-curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/debian.deb.txt' | sudo tee /etc/apt/sources.list.d/caddy-stable.list
-sudo apt update && sudo apt install -y caddy
-
-# pg_dump 18 para los respaldos (Neon usa PostgreSQL 18)
+node -v    # debe decir v22.x
 sudo install -d /usr/share/postgresql-common/pgdg
 sudo curl -o /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc --fail https://www.postgresql.org/media/keys/ACCC4CF8.asc
 echo "deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.asc] https://apt.postgresql.org/pub/repos/apt $(. /etc/os-release && echo $VERSION_CODENAME)-pgdg main" | sudo tee /etc/apt/sources.list.d/pgdg.list
@@ -71,7 +61,7 @@ Llene así (las dos URL se copian de Neon → **Connect**, rama principal):
 ```env
 DATABASE_URL="postgresql://…-pooler…/neondb?sslmode=require&channel_binding=require"
 DIRECT_URL="postgresql://…(sin -pooler)…/neondb?sslmode=require&channel_binding=require"
-PORT=3000
+PORT=3100
 TZ=America/Costa_Rica
 SESSION_SECRET="(texto nuevo, ver abajo)"
 UPLOAD_DIR=uploads
@@ -106,17 +96,23 @@ sudo -u rifas npm run crear-admin -w api
 sudo cp /opt/rifas/despliegue/rifas.service /etc/systemd/system/
 sudo systemctl daemon-reload
 sudo systemctl enable --now rifas
-curl http://127.0.0.1:3000/api/health     # debe decir "conectada"
+curl http://127.0.0.1:3100/api/health     # debe decir "conectada"
 ```
 
-## 7. HTTPS con Caddy
+## 7. Publicar en Nginx con HTTPS
 
-Si usó otro subdominio, cámbielo primero en `despliegue/Caddyfile`.
+Antes, revise que DuckDNS ya apunte al VPS: `ping -c1 rifasivannia.duckdns.org` debe mostrar `169.58.105.198`.
 
 ```bash
-sudo cp /opt/rifas/despliegue/Caddyfile /etc/caddy/Caddyfile
-sudo systemctl reload caddy
+sudo cp /opt/rifas/despliegue/nginx-rifas.conf /etc/nginx/sites-available/rifas
+sudo ln -s /etc/nginx/sites-available/rifas /etc/nginx/sites-enabled/rifas
+sudo nginx -t                      # debe decir "syntax is ok" y "test is successful"
+sudo systemctl reload nginx        # reload: los otros sitios siguen sin cortes
+sudo certbot --nginx -d rifasivannia.duckdns.org
 ```
+
+Si `nginx -t` da error, **no** recargue: borre el enlace (`sudo rm /etc/nginx/sites-enabled/rifas`) y avise.
+certbot pide un correo la primera vez y agrega solo el HTTPS y la redirección de http a https; se renueva solo.
 
 En uno o dos minutos <https://rifasivannia.duckdns.org> abre con candado.
 Pruébelo **con datos móviles** (sin Wi-Fi) desde el celular.
@@ -160,9 +156,10 @@ sudo -u rifas /opt/rifas/despliegue/actualizar.sh
 
 | Qué pasa | Qué revisar |
 | --- | --- |
-| La página no abre | `sudo systemctl status rifas caddy` |
+| La página no abre | `sudo systemctl status rifas nginx` |
 | Error de la app | `sudo journalctl -u rifas -n 50` |
-| No sale el candado HTTPS | Que DuckDNS tenga la IP correcta y los puertos 80/443 abiertos: `sudo journalctl -u caddy -n 50` |
+| No sale el candado HTTPS | Que DuckDNS tenga la IP correcta y volver a correr `sudo certbot --nginx -d rifasivannia.duckdns.org` |
+| Error 502 en la página | La app no está corriendo: `sudo systemctl restart rifas` y `sudo journalctl -u rifas -n 50` |
 | "Base de datos: sin conexión" | Las URL de Neon en `api/.env` |
 | Mamá olvidó la contraseña | `cd /opt/rifas && sudo -u rifas npm run crear-admin -w api` (mismo usuario, clave nueva) |
 

@@ -45,7 +45,7 @@ Siguiente: correr `despliegue/README.md` en el VPS con el usuario y probar con m
 
 ### 4. Despliegue (sin Docker)
 - [x] Forma de correr en el VPS: Node 22 + systemd (`despliegue/rifas.service`), usuario `rifas`, app en `/opt/rifas`
-- [x] HTTPS con Caddy nativo (`despliegue/Caddyfile`), subdominio DuckDNS sugerido `rifasivannia.duckdns.org`
+- [x] HTTPS: el VPS ya usa Nginx en 80/443 para otros proyectos (portafolio, stockly en Docker, techrag en :3001), así que se cambió Caddy por un sitio de Nginx (`despliegue/nginx-rifas.conf`) + certbot. App en el puerto **3100**. Subdominio `rifasivannia.duckdns.org` → 169.58.105.198 (2026-11-08).
 - [x] Respaldos: `despliegue/respaldo.sh` (pg_dump 18 + fotos, 14 días) por cron
 - [x] Actualizar: `despliegue/actualizar.sh`
 - [x] PWA instalable (manifest, íconos de tómbola, service worker); abre en `/admin`

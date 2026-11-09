@@ -4,6 +4,10 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
+# Puerto de la app (PORT en api/.env).
+PUERTO=$(grep -E '^PORT=' api/.env | cut -d= -f2 | tr -d '"' || true)
+PUERTO=${PUERTO:-3000}
+
 echo "→ Bajando cambios de GitHub…"
 git pull --ff-only
 
@@ -21,7 +25,7 @@ sudo systemctl restart rifas
 
 # Espera a que la app conteste antes de dar el visto bueno.
 for _ in $(seq 1 15); do
-  if curl -fsS http://127.0.0.1:3000/api/health >/dev/null 2>&1; then
+  if curl -fsS http://127.0.0.1:${PUERTO}/api/health >/dev/null 2>&1; then
     echo "✔ Rifas Ivannia actualizada y funcionando."
     exit 0
   fi
