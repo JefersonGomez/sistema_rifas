@@ -3,8 +3,10 @@
 Bitácora de avance. Actualizar al cerrar cada tarea o etapa.
 
 ## Estado actual
-**Etapas 1, 2, 3 y 5 terminadas (2026-11-08). Falta ejecutar la Etapa 4 (despliegue) en el VPS** (no hay acceso desde aquí).
-Siguiente: correr `despliegue/README.md` en el VPS con el usuario y probar con mamá.
+**Todas las etapas de código terminadas. Publicada el 2026-11-09 en https://rifasivannia.duckdns.org** (VPS Contabo, Nginx + certbot, app en :3100, respaldo diario por cron del usuario `rifas`).
+Siguiente: rama `desarrollo` en Neon para la compu, vaciar datos de prueba de la principal, borrar usuario `prueba`, volver a subir la foto de la licuadora en producción y probar con mamá con datos móviles.
+- El VPS usa hora UTC: el cron del respaldo va a las 9:00 UTC = 3:00 a. m. en Costa Rica.
+- Las fotos viven en `/opt/rifas/api/uploads` del VPS (las de la compu no se suben solas).
 
 **2026-11-06 — Premios 1.º/2.º/3.º y mejoras visuales:**
 - Tabla `premios` (1 a 3 por rifa). Migración `20261106120000_premios` pasó el premio de cada rifa al 1.er lugar sin perder datos y quitó `rifas.premio`, `costo_premio`, `numero_ganador`.
@@ -51,8 +53,7 @@ Siguiente: correr `despliegue/README.md` en el VPS con el usuario y probar con m
 - [x] PWA instalable (manifest, íconos de tómbola, service worker); abre en `/admin`
 - [x] Producción probada en la compu: cookie Secure, caché de assets, rutas directas, 404 de fotos, instalable sin errores
 - [x] Guía paso a paso: `despliegue/README.md`
-- [ ] Ejecutar la guía en el VPS (usuario)
-- [ ] Registrar subdominio en DuckDNS (usuario)
+- [x] Ejecutar la guía en el VPS y registrar DuckDNS (2026-11-09)
 - [ ] Vaciar datos de prueba de la rama principal de Neon antes de usarla de verdad
 - [ ] Probar con mamá en su teléfono con datos móviles y ajustar
 
