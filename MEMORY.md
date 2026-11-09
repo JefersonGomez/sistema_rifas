@@ -4,7 +4,7 @@ Bitácora de avance. Actualizar al cerrar cada tarea o etapa.
 
 ## Estado actual
 **Todas las etapas de código terminadas. Publicada el 2026-11-09 en https://rifasivannia.duckdns.org** (VPS Contabo, Nginx + certbot, app en :3100, respaldo diario por cron del usuario `rifas`).
-Siguiente: rama `desarrollo` en Neon para la compu, vaciar datos de prueba de la principal, borrar usuario `prueba`, volver a subir la foto de la licuadora en producción y probar con mamá con datos móviles.
+Siguiente: vaciar datos de prueba de la principal, borrar usuario `prueba`, volver a subir la foto de la licuadora en producción y probar con mamá con datos móviles.
 - El VPS usa hora UTC: el cron del respaldo va a las 9:00 UTC = 3:00 a. m. en Costa Rica.
 - Las fotos viven en `/opt/rifas/api/uploads` del VPS (las de la compu no se suben solas).
 
@@ -95,6 +95,6 @@ Siguiente: rama `desarrollo` en Neon para la compu, vaciar datos de prueba de la
 - **La base de Neon tiene datos de prueba** (seed). Antes de usarla con mamá hay que vaciarlos, o usar una rama de Neon aparte para desarrollo.
 - **WhatsApp y SINPE: 8326-0482** (confirmado por el usuario el 2026-11-06; el 8326-0382 era un error).
 - Nombre: **Rifas Ivannia**. Regla: número del primer premio de la Lotería Nacional de Costa Rica.
-- Pendiente: crear rama `desarrollo` en Neon y poner su URL en `api/.env`; la rama principal queda para datos reales.
+- Neon: la rama principal se llama **production** (la usa el VPS, datos reales). La compu usa la rama **desarrollo** (creada el 2026-11-08 con copia de los datos de prueba) en `api/.env`.
 - Vender tarda ~2 s (guardar + recargar desde Neon en EE. UU.). Optimizar si molesta.
 - `api/uploads/` guarda las fotos; está en .gitignore y hay que respaldarla en el VPS.
