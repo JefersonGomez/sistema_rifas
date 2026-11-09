@@ -133,10 +133,12 @@ function RifaActiva({ rifa }) {
 
 function Premio({ rifa }) {
   const [principal, ...otros] = rifa.premios;
+  // Si la foto no carga (borrada o perdida), se muestra la tómbola en vez de un cuadro roto.
+  const [fotoRota, setFotoRota] = useState(false);
   return (
     <section className="clara overflow-hidden rounded-3xl bg-white text-tinta shadow-lg">
       <div className="relative">
-        {rifa.fotoUrl ? (
+        {rifa.fotoUrl && !fotoRota ? (
           // La foto se ve completa (sin recortes) sea horizontal o vertical. El espacio que sobra
           // se rellena con la misma foto difuminada, así el cuadro nunca queda con franjas vacías.
           <div className="relative aspect-[4/3] w-full overflow-hidden bg-tinta/10">
@@ -144,6 +146,7 @@ function Premio({ rifa }) {
             <img
               src={rifa.fotoUrl}
               alt={principal?.descripcion ?? rifa.titulo}
+              onError={() => setFotoRota(true)}
               className="relative h-full w-full object-contain drop-shadow-xl"
             />
           </div>
